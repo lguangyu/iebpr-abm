@@ -1,0 +1,11 @@
+[*.py]
+charset = utf-8
+indent_size = 4
+indent_style = tab
+end_of_line = lf
+
+[*.{hpp,cpp}]
+charset = cp1252
+indent_size = 4
+indent_style = tab
+end_of_line = lf
