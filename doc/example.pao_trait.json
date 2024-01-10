@@ -1,0 +1,73 @@
+{
+	"mu": {
+		"type": "normal",
+		"mean": 1.5,
+		"stddev": 0.1
+	},
+	"q_glycogen": {
+		"type": "normal",
+		"mean": 1.85,
+		"stddev": 0.1
+	},
+	"q_pha": {
+		"type": "normal",
+		"mean": 3.0,
+		"stddev": 0.2
+	},
+	"q_polyp": {
+		"type": "normal",
+		"mean": 2.5,
+		"stddev": 0.1
+	},
+	"m_aerobic": 0.14,
+	"m_anaerobic": 0.05,
+	"b_aerobic": 0.04,
+	"b_anaerobic": 0.01,
+	"b_glycogen": 0,
+	"b_pha": 0,
+	"b_polyp": 0,
+	"x_glycogen_min": 0,
+	"x_glycogen_max": 0.2,
+	"x_pha_min": 0,
+	"x_pha_max": 0.4,
+	"x_polyp_min": 0,
+	"x_polyp_max": 0.28,
+	"k_hac": {
+		"type": "normal",
+		"mean": 2.5,
+		"stddev": 0.5
+	},
+	"k_op_polyp": {
+		"type": "normal",
+		"mean": 0.2,
+		"stddev": 0.02
+	},
+	"k_glycogen": {
+		"type": "normal",
+		"mean": 0.02,
+		"stddev": 0.002
+	},
+	"k_pha": {
+		"type": "normal",
+		"mean": 0.02,
+		"stddev": 0.001
+	},
+	"k_polyp": {
+		"type": "normal",
+		"mean": 0.02,
+		"stddev": 0.003
+	},
+	"ki_glycogen": 0.03,
+	"ki_pha": 0.03,
+	"ki_polyp": 0.01,
+	"y_h": 0.63,
+	"y_glycogen_pha": 0.75,
+	"y_polyp_pha": 4.83,
+	"y_pha_hac": 1.5,
+	"y_prel": 0.75,
+	"i_bmp": 0.015,
+	"enable_tca": {
+		"type": "bernoulli",
+		"mean": 0.75
+	}
+}

@@ -1,0 +1,21 @@
+{
+	"mu": {
+		"type": "normal",
+		"mean": 4.0,
+		"stddev": 0.5
+	},
+	"b_aerobic": 0.15,
+	"b_anaerobic": 0.05,
+	"k_hac": {
+		"type": "normal",
+		"mean": 6,
+		"stddev": 1
+	},
+	"k_op": {
+		"type": "normal",
+		"mean": 2,
+		"stddev": 0.3
+	},
+	"y_h": 0.63,
+	"i_bmp": 0.015
+}

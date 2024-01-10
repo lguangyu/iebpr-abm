@@ -1,0 +1,27 @@
+{
+	"mu": {
+		"type": "constant",
+		"mean": 4.0
+	},
+	"b_aerobic": {
+		"type": "constant",
+		"mean": 0.4
+	},
+	"b_anaerobic": {
+		"type": "constant",
+		"mean": 0.1
+	},
+	"k_hac": {
+		"type": "constant",
+		"mean": 0.01
+	},
+	"k_op": {
+		"type": "constant",
+		"mean": 0.01
+	},
+	"y_h": {
+		"type": "constant",
+		"mean": 0.6
+	},
+	"i_bmp": 0.015
+}

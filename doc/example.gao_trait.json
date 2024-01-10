@@ -1,0 +1,53 @@
+{
+	"mu": {
+		"type": "normal",
+		"mean": 1.5,
+		"stddev": 0.1
+	},
+	"q_glycogen": {
+		"type": "normal",
+		"mean": 2.5,
+		"stddev": 0.2
+	},
+	"q_pha": {
+		"type": "normal",
+		"mean": 3.0,
+		"stddev": 0.2
+	},
+	"m_aerobic": 0.21,
+	"m_anaerobic": 0.05,
+	"b_aerobic": 0.04,
+	"b_anaerobic": 0.01,
+	"b_glycogen": 0,
+	"b_pha": 0,
+	"x_glycogen_min": 0,
+	"x_glycogen_max": 0.3,
+	"x_pha_min": 0,
+	"x_pha_max": 0.4,
+	"k_hac": {
+		"type": "normal",
+		"mean": 2.5,
+		"stddev": 0.5
+	},
+	"k_op": {
+		"type": "normal",
+		"mean": 1,
+		"stddev": 0.1
+	},
+	"k_glycogen": {
+		"type": "normal",
+		"mean": 0.02,
+		"stddev": 0.002
+	},
+	"k_pha": {
+		"type": "normal",
+		"mean": 0.02,
+		"stddev": 0.003
+	},
+	"ki_glycogen": 0.03,
+	"ki_pha": 0.03,
+	"y_h": 0.63,
+	"y_glycogen_pha": 0.75,
+	"y_pha_hac": 1.5,
+	"i_bmp": 0.015
+}

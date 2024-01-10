@@ -1,0 +1,10 @@
+{
+	"biomass": {
+		"type": "constant",
+		"mean": 100.0
+	},
+	"split_biomass": {
+		"type": "constant",
+		"mean": 200.0
+	}
+}

@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel", "numpy>1.15"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "iebpr"
+description = "Agent-based model for simulating PAO-GAO competition"
+authors = [{ name = "Guangyu Li", email = "gl343@cornell.edu" }]
+license = { text = "GNU General Public License v3" }
+requires-python = ">=3.9"
+classifiers = [
+	"Programming Language :: Python :: 3",
+	"Programming Language :: C++",
+]
+dependencies = ["numpy>=1.15"]
+dynamic = ["version", "readme"]
+
+[tool.setuptools.dynamic]
+version = { attr = "iebpr.__version__" }
+readme = { file = "README.md", content-type = "text/markdown" }
