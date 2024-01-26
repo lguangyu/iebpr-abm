@@ -1,48 +1,36 @@
 #ifndef __IEBPR_AGENT_DATA_HPP__
 #define __IEBPR_AGENT_DATA_HPP__
 
-#include <array>
 #include "def.hpp"
 #include "env_state.hpp"
+#include <cstring>
 
 namespace iebpr
 {
-	struct AgentStateStruct
+	struct AgentState
 	{
-	public:
 		stvalue_t biomass;
 		stvalue_t rela_count;	 // relative cell count
 		stvalue_t split_biomass; // biomass to trigger split
 		stvalue_t glycogen;		 // store as absolute value, not content
 		stvalue_t pha;			 // store as absolute value, not content
 		stvalue_t polyp;		 // store as absolute value, not content
+		// array-like access utility
+		static const size_t arr_size;
 
-		explicit AgentStateStruct(void) noexcept
+		explicit AgentState(void) noexcept
 			: biomass(0), split_biomass(0), glycogen(0), pha(0), polyp(0)
 		{
 		}
-	};
-
-	union AgentState
-	{
-		AgentStateStruct s;
-		constexpr static size_t arr_size = stvalue_arr_size<decltype(s)>();
-		std::array<stvalue_t, arr_size> arr;
-		// ensure aligned
-		static_assert(sizeof(decltype(s)) == sizeof(decltype(arr)), "");
-
-		explicit AgentState(void) noexcept
-			: s(){};
-		~AgentState(void){};
 
 		//======================================================================
 		// INTERNAL API
 		//======================================================================
 
 		// return true if agent is active
-		inline bool is_active(void) const noexcept { return s.biomass > 0; };
+		inline bool is_active(void) const noexcept { return biomass > 0; };
 		// true if biomass >= split_biomass
-		inline bool can_split(void) const noexcept { return is_active() && (s.biomass >= s.split_biomass); }
+		inline bool can_split(void) const noexcept { return is_active() && (biomass >= split_biomass); }
 		// clear content
 		void clear_state_content(void) noexcept;
 		// scale content
@@ -51,7 +39,7 @@ namespace iebpr
 		void merge_with(const AgentState &other, bool no_check = false) noexcept;
 	};
 
-	struct AgentRateTraitStruct
+	struct AgentRateTrait
 	{
 	public:
 		// synthesis rate
@@ -68,9 +56,11 @@ namespace iebpr
 		stvalue_t b_glycogen;
 		stvalue_t b_pha;
 		stvalue_t b_polyp;
+		// array-like access utility
+		static const size_t arr_size;
 	};
 
-	struct AgentRegularTraitStruct
+	struct AgentRegularTrait
 	{
 	public:
 		// mix/max quota
@@ -98,48 +88,33 @@ namespace iebpr
 		stvalue_t y_pha_hac;
 		stvalue_t y_prel;
 		stvalue_t i_bmp;
+		// array-like access utility
+		static const size_t arr_size;
 	};
 
-	struct AgentBoolTraitStruct
+	struct AgentBoolTrait
 	{
 	public:
 		bivalue_t enable_tca;
 		bivalue_t maint_polyp_first;
+		// array-like access utility
+		static const size_t arr_size;
 	};
 
-	struct AgentTraitStruct
+	struct AgentTrait
 	{
-		AgentRateTraitStruct rate;
-		AgentRegularTraitStruct reg;
-		AgentBoolTraitStruct b;
-	};
-
-	static_assert(sizeof(AgentTraitStruct) == sizeof(AgentRateTraitStruct) + sizeof(AgentRegularTraitStruct) + sizeof(AgentBoolTraitStruct), "");
-
-	union AgentTrait
-	{
-		AgentTraitStruct s;
-		constexpr static auto arr_size = stvalue_arr_size<decltype(s)>();
-		std::array<stvalue_t, arr_size> arr;
-		// array access to the sub structs
-		constexpr static auto rate_struct_size = stvalue_arr_size<decltype(s.rate)>();
-		constexpr static auto reg_struct_size = stvalue_arr_size<decltype(s.reg)>();
-		constexpr static auto b_struct_size = stvalue_arr_size<decltype(s.b)>();
-		constexpr static auto rate_arr_begin = offsetof(decltype(s), rate) / agent_field_size;
-		constexpr static auto rate_arr_end = rate_arr_begin + rate_struct_size;
-		constexpr static auto reg_arr_begin = offsetof(decltype(s), reg) / agent_field_size;
-		constexpr static auto reg_arr_end = reg_arr_begin + reg_struct_size;
-		constexpr static auto b_arr_begin = offsetof(decltype(s), b) / agent_field_size;
-		constexpr static auto b_arr_end = b_arr_begin + b_struct_size;
-		// ensure aligned
-		static_assert(sizeof(decltype(s)) == sizeof(decltype(arr)), "");
+		AgentRateTrait rate;
+		AgentRegularTrait reg;
+		AgentBoolTrait bt;
+		// array-like access utility
+		static const size_t arr_size;
+		static const size_t rate_begin, reg_begin, bt_begin;
+		static const size_t rate_end, reg_end, bt_end;
 
 		explicit AgentTrait(void) noexcept
 		{
-			for (auto &v : arr)
-				v = 0;
+			std::memset(this, 0, sizeof(AgentTrait));
 		}
-		~AgentTrait(void){};
 
 		//======================================================================
 		// INTERNAL API
@@ -149,8 +124,6 @@ namespace iebpr
 		// as the arithmetic mean with weight (coef_self) and (1 - coef_self)
 		void merge_with(const AgentTrait &other, stvalue_t coef_self) noexcept;
 	};
-
-	static_assert(sizeof(AgentTraitStruct) == sizeof(AgentTrait), "");
 
 	struct AgentData
 	{
@@ -177,21 +150,22 @@ namespace iebpr
 		// INTERNAL API / FREQUENTLY USED AGENT CALCULATION MACROS
 		//======================================================================
 
-		inline stvalue_t monod_vfa(const EnvState &env) const noexcept { return env.vfa_conc / (env.vfa_conc + trait.s.reg.k_hac); };
-		inline stvalue_t monod_op(const EnvState &env) const noexcept { return env.op_conc / (env.op_conc + trait.s.reg.k_op); };
-		inline stvalue_t x_glycogen(void) const noexcept { return is_active() ? state.s.glycogen / state.s.biomass - trait.s.reg.x_glycogen_min : 0; };
-		inline stvalue_t x_pha(void) const noexcept { return is_active() ? state.s.pha / state.s.biomass - trait.s.reg.x_pha_min : 0; };
-		inline stvalue_t x_polyp(void) const noexcept { return is_active() ? state.s.polyp / state.s.biomass - trait.s.reg.x_polyp_min : 0; };
-		inline stvalue_t monod_glycogen(void) const noexcept { return x_glycogen() / (x_glycogen() + trait.s.reg.k_glycogen); };
-		inline stvalue_t monod_pha(void) const noexcept { return x_pha() / (x_pha() + trait.s.reg.k_pha); };
-		inline stvalue_t monod_polyp(void) const noexcept { return x_polyp() / (x_polyp() + trait.s.reg.k_polyp); };
-		inline stvalue_t i_glycogen(void) const noexcept { return is_active() ? trait.s.reg.x_glycogen_max - state.s.glycogen / state.s.biomass : 0; };
-		inline stvalue_t i_pha(void) const noexcept { return is_active() ? trait.s.reg.x_pha_max - state.s.pha / state.s.biomass : 0; };
-		inline stvalue_t i_polyp(void) const noexcept { return is_active() ? trait.s.reg.x_polyp_max - state.s.polyp / state.s.biomass : 0; };
-		inline stvalue_t inhib_glycogen(void) const noexcept { return i_glycogen() / (i_glycogen() + trait.s.reg.ki_glycogen); };
-		inline stvalue_t inhib_pha(void) const noexcept { return i_pha() / (i_pha() + trait.s.reg.ki_pha); };
-		inline stvalue_t inhib_polyp(void) const noexcept { return i_polyp() / (i_polyp() + trait.s.reg.ki_polyp); };
+		inline stvalue_t monod_vfa(const EnvState &env) const noexcept { return env.vfa_conc / (env.vfa_conc + trait.reg.k_hac); };
+		inline stvalue_t monod_op(const EnvState &env) const noexcept { return env.op_conc / (env.op_conc + trait.reg.k_op); };
+		inline stvalue_t x_glycogen(void) const noexcept { return is_active() ? state.glycogen / state.biomass - trait.reg.x_glycogen_min : 0; };
+		inline stvalue_t x_pha(void) const noexcept { return is_active() ? state.pha / state.biomass - trait.reg.x_pha_min : 0; };
+		inline stvalue_t x_polyp(void) const noexcept { return is_active() ? state.polyp / state.biomass - trait.reg.x_polyp_min : 0; };
+		inline stvalue_t monod_glycogen(void) const noexcept { return x_glycogen() / (x_glycogen() + trait.reg.k_glycogen); };
+		inline stvalue_t monod_pha(void) const noexcept { return x_pha() / (x_pha() + trait.reg.k_pha); };
+		inline stvalue_t monod_polyp(void) const noexcept { return x_polyp() / (x_polyp() + trait.reg.k_polyp); };
+		inline stvalue_t i_glycogen(void) const noexcept { return is_active() ? trait.reg.x_glycogen_max - state.glycogen / state.biomass : 0; };
+		inline stvalue_t i_pha(void) const noexcept { return is_active() ? trait.reg.x_pha_max - state.pha / state.biomass : 0; };
+		inline stvalue_t i_polyp(void) const noexcept { return is_active() ? trait.reg.x_polyp_max - state.polyp / state.biomass : 0; };
+		inline stvalue_t inhib_glycogen(void) const noexcept { return i_glycogen() / (i_glycogen() + trait.reg.ki_glycogen); };
+		inline stvalue_t inhib_pha(void) const noexcept { return i_pha() / (i_pha() + trait.reg.ki_pha); };
+		inline stvalue_t inhib_polyp(void) const noexcept { return i_polyp() / (i_polyp() + trait.reg.ki_polyp); };
 	};
+
 } // namespace iebpr
 
 #endif

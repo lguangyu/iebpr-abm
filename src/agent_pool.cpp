@@ -56,8 +56,8 @@ namespace iebpr
 	}
 
 	void AgentPool::add_agent_subtype(AgentSubtypeBase::subtype_enum subtype, size_t n_agent,
-									  const AgentSubtypeBase::StateRandConfig &state_cfg,
-									  const AgentSubtypeBase::TraitRandConfig &trait_cfg)
+									  const StateRandConfig &state_cfg,
+									  const TraitRandConfig &trait_cfg)
 	{
 		add_agent_subtype(subtype, n_agent);
 		agent_subtype.back()->state_cfg = state_cfg;
@@ -70,25 +70,29 @@ namespace iebpr
 		// check rand configs
 		for (auto &v : agent_subtype)
 		{
+			Randomizer::RandConfig *cfg_ptr = nullptr;
+
 			// state config
-			for (auto &cfg : v->state_cfg.arr)
-				if (auto ec = cfg.validate())
+			cfg_ptr = reinterpret_cast<Randomizer::RandConfig *>(&(v->state_cfg));
+			for (size_t i = 0; i < StateRandConfig::arr_size; i++)
+				if (auto ec = cfg_ptr[i].validate())
 					return ec;
 			// rate trait config
-			for (auto i = AgentTrait::rate_arr_begin; i < AgentTrait::rate_arr_end; i++)
-				if (auto ec = v->trait_cfg.arr[i].validate())
+			cfg_ptr = reinterpret_cast<Randomizer::RandConfig *>(&(v->trait_cfg));
+			for (auto i = AgentTrait::rate_begin; i < AgentTrait::rate_end; i++)
+				if (auto ec = cfg_ptr[i].validate())
 					return ec;
 			// regular trait config
-			for (auto i = AgentTrait::reg_arr_begin; i < AgentTrait::reg_arr_end; i++)
-				if (auto ec = v->trait_cfg.arr[i].validate())
+			for (auto i = AgentTrait::reg_begin; i < AgentTrait::reg_end; i++)
+				if (auto ec = cfg_ptr[i].validate())
 					return ec;
 			// bool trait config
-			for (auto i = AgentTrait::b_arr_begin; i < AgentTrait::b_arr_end; i++)
+			for (auto i = AgentTrait::bt_begin; i < AgentTrait::bt_end; i++)
 			{
-				const auto &cfg = v->trait_cfg.arr[i];
-				if ((cfg.type != Randomizer::rand_t::none) && (cfg.type != Randomizer::rand_t::bernoulli))
+				if ((cfg_ptr[i].type != Randomizer::rand_t::none) &&
+					(cfg_ptr[i].type != Randomizer::rand_t::bernoulli))
 					return bool_trait_wrong_rand_type;
-				if (auto ec = cfg.validate())
+				if (auto ec = cfg_ptr[i].validate())
 					return ec;
 			}
 		}

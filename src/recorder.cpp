@@ -2,6 +2,10 @@
 
 namespace iebpr
 {
+	// calc array-like access size
+	const size_t EnvStateRecData::arr_size = stvalue_arr_size<EnvStateRecData>();
+	const size_t AgentStateRecData::arr_size = stvalue_arr_size<AgentStateRecData>();
+
 	error_enum Recorder::preinit_validate(void) const noexcept
 	{
 		return none;

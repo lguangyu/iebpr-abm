@@ -22,14 +22,14 @@ namespace iebpr
 		struct StateRandConfigPyObject
 		{
 			PyObject_HEAD;
-			AgentSubtypeBase::StateRandConfig cdata;
+			StateRandConfig cdata;
 			static const PyTypeObject *const type;
 		};
 
 		struct TraitRandConfigPyObject
 		{
 			PyObject_HEAD;
-			AgentSubtypeBase::TraitRandConfig cdata;
+			TraitRandConfig cdata;
 			static const PyTypeObject *const type;
 		};
 

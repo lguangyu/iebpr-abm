@@ -97,8 +97,8 @@ namespace iebpr
 	}
 
 	void Simulation::add_agent_subtype(subtype_enum subtype, size_t n_agent,
-									   const AgentSubtypeBase::StateRandConfig &state_cfg,
-									   const AgentSubtypeBase::TraitRandConfig &trait_cfg)
+									   const StateRandConfig &state_cfg,
+									   const TraitRandConfig &trait_cfg)
 	{
 		pool.add_agent_subtype(subtype, n_agent, state_cfg, trait_cfg);
 		return;

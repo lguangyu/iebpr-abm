@@ -2,9 +2,25 @@
 
 namespace iebpr
 {
+	// calc array-like access size
+	const size_t AgentState::arr_size = stvalue_arr_size<AgentState>();
+	const size_t AgentRateTrait::arr_size = stvalue_arr_size<AgentRateTrait>();
+	const size_t AgentRegularTrait::arr_size = stvalue_arr_size<AgentRegularTrait>();
+	const size_t AgentBoolTrait::arr_size = stvalue_arr_size<AgentBoolTrait>();
+	const size_t AgentTrait::arr_size = stvalue_arr_size<AgentTrait>();
+
+	// begin offset
+	const size_t AgentTrait::rate_begin = offsetof(AgentTrait, rate) / agent_field_size;
+	const size_t AgentTrait::reg_begin = offsetof(AgentTrait, reg) / agent_field_size;
+	const size_t AgentTrait::bt_begin = offsetof(AgentTrait, bt) / agent_field_size;
+	// end offset
+	const size_t AgentTrait::rate_end = AgentTrait::rate_begin + AgentRateTrait::arr_size;
+	const size_t AgentTrait::reg_end = AgentTrait::reg_begin + AgentRegularTrait::arr_size;
+	const size_t AgentTrait::bt_end = AgentTrait::bt_begin + AgentBoolTrait::arr_size;
+
 	void AgentState::clear_state_content(void) noexcept
 	{
-		arr.fill(0);
+		std::memset(this, 0, sizeof(AgentState));
 		return;
 	};
 
@@ -15,37 +31,39 @@ namespace iebpr
 			clear_state_content();
 			return;
 		}
-		for (auto &v : arr)
-			v *= factor;
+
+		stvalue_t *const val_ptr = reinterpret_cast<stvalue_t *>(this);
+		for (size_t i = 0; i < AgentState::arr_size; i++)
+			*(val_ptr + i) *= factor;
 		return;
 	}
 
 	void AgentState::merge_with(const AgentState &other, bool no_check) noexcept
 	{
-		s.biomass += other.s.biomass;
+		biomass += other.biomass;
 		if (!is_active())
 		{
 			clear_state_content();
 			// no need to do the rest
 			return;
 		}
-		s.rela_count += other.s.rela_count;
-		s.split_biomass += other.s.split_biomass;
-		s.glycogen += other.s.glycogen;
-		s.pha += other.s.pha;
-		s.polyp += other.s.polyp;
+		rela_count += other.rela_count;
+		split_biomass += other.split_biomass;
+		glycogen += other.glycogen;
+		pha += other.pha;
+		polyp += other.polyp;
 		if (no_check)
 			return;
-		if (s.rela_count < 0)
-			s.rela_count = 0;
-		if (s.split_biomass < 0)
-			s.split_biomass = 0;
-		if (s.glycogen < 0)
-			s.glycogen = 0;
-		if (s.pha < 0)
-			s.pha = 0;
-		if (s.polyp < 0)
-			s.polyp = 0;
+		if (rela_count < 0)
+			rela_count = 0;
+		if (split_biomass < 0)
+			split_biomass = 0;
+		if (glycogen < 0)
+			glycogen = 0;
+		if (pha < 0)
+			pha = 0;
+		if (polyp < 0)
+			polyp = 0;
 		return;
 	}
 
@@ -53,24 +71,27 @@ namespace iebpr
 	{
 		auto coef_other = 1.0 - coef_self;
 
+		stvalue_t *const val_ptr = reinterpret_cast<stvalue_t *>(this);
+		const stvalue_t *const oth_ptr = reinterpret_cast<const stvalue_t *>(&other);
+
 		// merge rate traits
-		for (auto i = rate_arr_begin; i < rate_arr_end; i++)
-			arr[i] = arr[i] * coef_self + other.arr[i] * coef_other;
+		for (auto i = rate_begin; i < rate_end; i++)
+			val_ptr[i] = val_ptr[i] * coef_self + oth_ptr[i] * coef_other;
 
 		// merge regular traits
-		for (auto i = reg_arr_begin; i < reg_arr_end; i++)
-			arr[i] = arr[i] * coef_self + other.arr[i] * coef_other;
+		for (auto i = reg_begin; i < reg_end; i++)
+			val_ptr[i] = val_ptr[i] * coef_self + oth_ptr[i] * coef_other;
 
 		// merge bool traits
 		if (coef_self < 0.5)
-			s.b = other.s.b;
+			bt = other.bt;
 		return;
 	}
 
 	void AgentData::merge_with(const AgentData &other) noexcept
 	{
 		// stvalue_t coef_self;
-		stvalue_t coef_self = ((!is_active()) && (!other.is_active())) ? 0.5 : state.s.biomass / (state.s.biomass + other.state.s.biomass);
+		stvalue_t coef_self = ((!is_active()) && (!other.is_active())) ? 0.5 : state.biomass / (state.biomass + other.state.biomass);
 		state.merge_with(other.state);
 		trait.merge_with(other.trait, coef_self);
 		return;

@@ -86,8 +86,8 @@ namespace iebpr
 		std::vector<AgentSubtypeBase::SubtypeSizeReport> n_agent_by_subtype(void) const noexcept;
 		// add new subtype config to AgentPool subunit
 		void add_agent_subtype(subtype_enum subtype, size_t n_agent,
-							   const AgentSubtypeBase::StateRandConfig &state_cfg,
-							   const AgentSubtypeBase::TraitRandConfig &trait_cfg);
+							   const StateRandConfig &state_cfg,
+							   const TraitRandConfig &trait_cfg);
 		// clear all agent subtype
 		void clear_agent_subtype(void) noexcept;
 

@@ -2,7 +2,6 @@
 #define __IEBPR_RECORDER_HPP__
 
 #include <algorithm>
-#include <array>
 #include <vector>
 #include "error_def.hpp"
 #include "env_state.hpp"
@@ -11,60 +10,39 @@
 
 namespace iebpr
 {
+	struct EnvStateRecData : public EnvState
+	{
+		// array-like access
+		static const size_t arr_size;
+
+		explicit EnvStateRecData(void) noexcept
+			: EnvState(){}; // use member ctor
+		EnvStateRecData(const EnvState &other) noexcept
+			: EnvState(other){};
+	};
+
+	struct AgentStateRecData
+	{
+		stvalue_t biomass;
+		stvalue_t rela_count;
+		stvalue_t glycogen;
+		stvalue_t pha;
+		stvalue_t polyp;
+		// array-like access
+		static const size_t arr_size;
+
+		explicit AgentStateRecData(void) noexcept
+			: biomass(0), rela_count(0), glycogen(0), pha(0), polyp(0) {}
+
+		AgentStateRecData(const AgentState &state) noexcept
+			: biomass(state.biomass), rela_count(state.rela_count),
+			  glycogen(state.glycogen), pha(state.pha), polyp(state.polyp)
+		{
+		}
+	};
+
 	class Recorder
 	{
-	public:
-		union EnvStateRecData
-		{
-			EnvState s;
-			constexpr static size_t arr_size = stvalue_arr_size<decltype(s)>();
-			std::array<stvalue_t, arr_size> arr;
-			// ensure aligned
-			static_assert(sizeof(decltype(s)) == sizeof(decltype(arr)), "");
-
-			explicit EnvStateRecData(void) noexcept
-				: s() {}
-			EnvStateRecData(const decltype(s) &other) noexcept
-				: s(other){};
-			EnvStateRecData(const EnvStateRecData &other) noexcept
-				: EnvStateRecData(other.s){};
-		};
-
-		struct AgentStateRecDataStruct
-		{
-		public:
-			stvalue_t biomass;
-			stvalue_t rela_count;
-			stvalue_t glycogen;
-			stvalue_t pha;
-			stvalue_t polyp;
-
-			explicit AgentStateRecDataStruct(void) noexcept
-				: biomass(0), rela_count(0), glycogen(0), pha(0), polyp(0) {}
-
-			AgentStateRecDataStruct(const AgentState &state) noexcept
-				: biomass(state.s.biomass), rela_count(state.s.rela_count),
-				  glycogen(state.s.glycogen), pha(state.s.pha), polyp(state.s.polyp)
-			{
-			}
-		};
-
-		union AgentStateRecData
-		{
-			AgentStateRecDataStruct s;
-			constexpr static size_t arr_size = stvalue_arr_size<decltype(s)>();
-			std::array<stvalue_t, arr_size> arr;
-			// ensure aligned
-			static_assert(sizeof(decltype(s)) == sizeof(decltype(arr)), "");
-
-			explicit AgentStateRecData(void) noexcept
-				: s(){};
-			AgentStateRecData(const decltype(s) &other) noexcept
-				: s(other){};
-			AgentStateRecData(const AgentState &state) noexcept
-				: s(state){};
-		};
-
 	public:
 		std::vector<stvalue_t> state_rec_timepoints;
 		std::vector<stvalue_t> snapshot_rec_timepoints;

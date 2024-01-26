@@ -43,8 +43,8 @@ namespace iebpr
 		// the added agent can be accessed by agent_subtype.back(), but at this
 		// point it's not necessary because all settings should have been done
 		void add_agent_subtype(AgentSubtypeBase::subtype_enum subtype, size_t n_agent,
-							   const AgentSubtypeBase::StateRandConfig &state_cfg,
-							   const AgentSubtypeBase::TraitRandConfig &trait_cfg);
+							   const StateRandConfig &state_cfg,
+							   const TraitRandConfig &trait_cfg);
 		// self validate before init
 		error_enum preinit_validate(void) const noexcept;
 		// initialize data before simulation run

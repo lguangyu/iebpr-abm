@@ -257,28 +257,28 @@ namespace iebpr
 			{nullptr, 0, 0, 0, nullptr},
 		};
 
-#define _statecfg_getset(attr, docstr)                                                                                           \
-	{                                                                                                                            \
-		#attr,                                                                                                                   \
-			[](PyObject *self, void *closure) /* getter */                                                                       \
-		{                                                                                                                        \
-			auto ret = RandConfigPyObjectType.tp_new(&RandConfigPyObjectType, nullptr, nullptr);                                 \
-			if (!ret)                                                                                                            \
-				return (PyObject *)nullptr;                                                                                      \
-			((RandConfigPyObject *)ret)->cdata = ((StateRandConfigPyObject *)self)->cdata.s.attr;                                \
-			assert(offsetof(AgentSubtypeBase::StateRandConfig, s.attr) / sizeof(Randomizer::RandConfig) < AgentState::arr_size); \
-			return ret;                                                                                                          \
-		},                                                                                                                       \
-			[](PyObject *self, PyObject *value, void *closure) /* setter */                                                      \
-		{                                                                                                                        \
-			if (!PyObject_IsInstance(value, (PyObject *)&RandConfigPyObjectType))                                                \
-				return -1;                                                                                                       \
-			((StateRandConfigPyObject *)self)->cdata.s.attr = ((RandConfigPyObject *)value)->cdata;                              \
-			assert(offsetof(AgentSubtypeBase::StateRandConfig, s.attr) / sizeof(Randomizer::RandConfig) < AgentState::arr_size); \
-			return 0;                                                                                                            \
-		},                                                                                                                       \
-			PyDoc_STR(docstr),                                                                                                   \
-			nullptr,                                                                                                             \
+#define _statecfg_getset(attr, docstr)                                                                       \
+	{                                                                                                        \
+		#attr,                                                                                               \
+			[](PyObject *self, void *closure) /* getter */                                                   \
+		{                                                                                                    \
+			auto ret = RandConfigPyObjectType.tp_new(&RandConfigPyObjectType, nullptr, nullptr);             \
+			if (!ret)                                                                                        \
+				return (PyObject *)nullptr;                                                                  \
+			((RandConfigPyObject *)ret)->cdata = ((StateRandConfigPyObject *)self)->cdata.attr;              \
+			assert(offsetof(StateRandConfig, attr) / sizeof(Randomizer::RandConfig) < AgentState::arr_size); \
+			return ret;                                                                                      \
+		},                                                                                                   \
+			[](PyObject *self, PyObject *value, void *closure) /* setter */                                  \
+		{                                                                                                    \
+			if (!PyObject_IsInstance(value, (PyObject *)&RandConfigPyObjectType))                            \
+				return -1;                                                                                   \
+			((StateRandConfigPyObject *)self)->cdata.attr = ((RandConfigPyObject *)value)->cdata;            \
+			assert(offsetof(StateRandConfig, attr) / sizeof(Randomizer::RandConfig) < AgentState::arr_size); \
+			return 0;                                                                                        \
+		},                                                                                                   \
+			PyDoc_STR(docstr),                                                                               \
+			nullptr,                                                                                         \
 	}
 
 		static PyGetSetDef StateRandConfigPyObjectType_getsets[] = {
@@ -339,7 +339,7 @@ namespace iebpr
 			auto o = PyType_GenericNew(type, args, kwargs);
 			if (o)
 				// initialize c++ object
-				new (&((StateRandConfigPyObject *)o)->cdata) AgentSubtypeBase::StateRandConfig();
+				new (&((StateRandConfigPyObject *)o)->cdata) StateRandConfig();
 			return o;
 		}
 
@@ -416,28 +416,28 @@ namespace iebpr
 			{nullptr, 0, 0, 0, nullptr},
 		};
 
-#define _traitcfg_getset(attr, docstr)                                                                                           \
-	{                                                                                                                            \
-		#attr,                                                                                                                   \
-			[](PyObject *self, void *closure) /* getter */                                                                       \
-		{                                                                                                                        \
-			auto ret = RandConfigPyObjectType.tp_new(&RandConfigPyObjectType, nullptr, nullptr);                                 \
-			if (!ret)                                                                                                            \
-				return (PyObject *)nullptr;                                                                                      \
-			((RandConfigPyObject *)ret)->cdata = ((TraitRandConfigPyObject *)self)->cdata.s.attr;                                \
-			assert(offsetof(AgentSubtypeBase::TraitRandConfig, s.attr) / sizeof(Randomizer::RandConfig) < AgentTrait::arr_size); \
-			return ret;                                                                                                          \
-		},                                                                                                                       \
-			[](PyObject *self, PyObject *value, void *closure) /* setter */                                                      \
-		{                                                                                                                        \
-			if (!PyObject_IsInstance(value, (PyObject *)&RandConfigPyObjectType))                                                \
-				return -1;                                                                                                       \
-			((TraitRandConfigPyObject *)self)->cdata.s.attr = ((RandConfigPyObject *)value)->cdata;                              \
-			assert(offsetof(AgentSubtypeBase::TraitRandConfig, s.attr) / sizeof(Randomizer::RandConfig) < AgentTrait::arr_size); \
-			return 0;                                                                                                            \
-		},                                                                                                                       \
-			PyDoc_STR(docstr),                                                                                                   \
-			nullptr,                                                                                                             \
+#define _traitcfg_getset(attr, docstr)                                                                       \
+	{                                                                                                        \
+		#attr,                                                                                               \
+			[](PyObject *self, void *closure) /* getter */                                                   \
+		{                                                                                                    \
+			auto ret = RandConfigPyObjectType.tp_new(&RandConfigPyObjectType, nullptr, nullptr);             \
+			if (!ret)                                                                                        \
+				return (PyObject *)nullptr;                                                                  \
+			((RandConfigPyObject *)ret)->cdata = ((TraitRandConfigPyObject *)self)->cdata.attr;              \
+			assert(offsetof(TraitRandConfig, attr) / sizeof(Randomizer::RandConfig) < AgentTrait::arr_size); \
+			return ret;                                                                                      \
+		},                                                                                                   \
+			[](PyObject *self, PyObject *value, void *closure) /* setter */                                  \
+		{                                                                                                    \
+			if (!PyObject_IsInstance(value, (PyObject *)&RandConfigPyObjectType))                            \
+				return -1;                                                                                   \
+			((TraitRandConfigPyObject *)self)->cdata.attr = ((RandConfigPyObject *)value)->cdata;            \
+			assert(offsetof(TraitRandConfig, attr) / sizeof(Randomizer::RandConfig) < AgentTrait::arr_size); \
+			return 0;                                                                                        \
+		},                                                                                                   \
+			PyDoc_STR(docstr),                                                                               \
+			nullptr,                                                                                         \
 	}
 
 		static PyGetSetDef TraitRandCOnfigPyObjectType_getsets[] = {
@@ -555,7 +555,7 @@ namespace iebpr
 			auto o = PyType_GenericNew(type, args, kwargs);
 			if (o)
 				// initialize c++ object
-				new (&((TraitRandConfigPyObject *)o)->cdata) AgentSubtypeBase::TraitRandConfig();
+				new (&((TraitRandConfigPyObject *)o)->cdata) TraitRandConfig();
 			return o;
 		}
 

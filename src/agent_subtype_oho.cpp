@@ -20,20 +20,20 @@ namespace iebpr
 		// cell growth
 		if ((env.vfa_conc > 0) && (env.op_conc > 0))
 		{
-			const auto delta = agent.trait.s.rate.mu * monod_vfa * monod_op * agent.state.s.biomass;
-			d_state.s.biomass += delta;
-			d_env.vfa_conc -= delta / agent.trait.s.reg.y_h;
-			d_env.op_conc -= delta * agent.trait.s.reg.i_bmp;
+			const auto delta = agent.trait.rate.mu * monod_vfa * monod_op * agent.state.biomass;
+			d_state.biomass += delta;
+			d_env.vfa_conc -= delta / agent.trait.reg.y_h;
+			d_env.op_conc -= delta * agent.trait.reg.i_bmp;
 		}
 		// biomass decay
 		{
-			const auto delta = agent.trait.s.rate.b_aerobic * agent.state.s.biomass;
-			d_state.s.biomass -= delta;
+			const auto delta = agent.trait.rate.b_aerobic * agent.state.biomass;
+			d_state.biomass -= delta;
 			d_env.vfa_conc += delta * agent_subtype_consts::VFA_PER_DECAYED_BIOMASS;
-			d_env.op_conc += delta * agent.trait.s.reg.i_bmp;
+			d_env.op_conc += delta * agent.trait.reg.i_bmp;
 		}
 		// update to agent
-		assert(d_state.s.split_biomass == 0);
+		assert(d_state.split_biomass == 0);
 		agent.state.merge_with(d_state);
 		return;
 	}
@@ -47,13 +47,13 @@ namespace iebpr
 
 		// biomass decay
 		{
-			const auto delta = agent.trait.s.rate.b_anaerobic * agent.state.s.biomass;
-			d_state.s.biomass -= delta;
+			const auto delta = agent.trait.rate.b_anaerobic * agent.state.biomass;
+			d_state.biomass -= delta;
 			d_env.vfa_conc += delta * agent_subtype_consts::VFA_PER_DECAYED_BIOMASS;
-			d_env.op_conc += delta * agent.trait.s.reg.i_bmp;
+			d_env.op_conc += delta * agent.trait.reg.i_bmp;
 		}
 		// update to agent
-		assert(d_state.s.split_biomass == 0);
+		assert(d_state.split_biomass == 0);
 		agent.state.merge_with(d_state);
 		return;
 	}
