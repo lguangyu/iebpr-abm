@@ -26,7 +26,7 @@ namespace iebpr
 								   "is_aerobic", "i8");
 			if (!o)
 				return -1;
-			assert(PyList_Size(o) == EnvStateRecData::arr_size);
+			assert(PyList_Size(o) == EnvStateRecData::arr_size());
 			conv_res = PyArray_DescrConverter(o, (PyArray_Descr **)&EnvStateRecDescr);
 			Py_DECREF(o);
 			if (!conv_res)
@@ -46,7 +46,7 @@ namespace iebpr
 								   "polyp", "f8");
 			if (!o)
 				return -1;
-			assert(PyList_Size(o) == AgentStateRecData::arr_size);
+			assert(PyList_Size(o) == AgentStateRecData::arr_size());
 			conv_res = PyArray_DescrConverter(o, (PyArray_Descr **)&AgentStateRecDescr);
 			Py_DECREF(o);
 			if (!conv_res)

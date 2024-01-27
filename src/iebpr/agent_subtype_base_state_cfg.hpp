@@ -15,7 +15,7 @@ namespace iebpr
 		Randomizer::RandConfig pha;
 		Randomizer::RandConfig polyp;
 		// array-like access
-		static const size_t arr_size;
+		with_access_as_arr(StateRandConfig, Randomizer::RandConfig);
 
 		explicit StateRandConfig(void) noexcept {}; // use member default ctor
 	};

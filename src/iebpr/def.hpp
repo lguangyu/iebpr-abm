@@ -34,26 +34,38 @@ namespace iebpr
 	constexpr stvalue_t stvalue_inf = std::numeric_limits<stvalue_t>::infinity();
 	constexpr stvalue_t stvalue_nan = std::numeric_limits<stvalue_t>::quiet_NaN();
 
+// this macro allow standard-layout struct with the same type of data (or types
+// with the same size) to be accessed as an array
+// S::arr_size() returns the size of the as-array
+// S::as_arr() returns the pointer to the first element of the as-array
+#ifndef with_access_as_arr
+#define with_access_as_arr(S, T)                                                             \
+	static constexpr size_t arr_size(void) noexcept                                          \
+	{                                                                                        \
+		static_assert(sizeof(S) % sizeof(T) == 0, "S doesn't have a size in multiple of T"); \
+		return sizeof(S) / sizeof(T);                                                        \
+	};                                                                                       \
+	T *as_arr(void) noexcept { return reinterpret_cast<T *>(this); };                        \
+	const T *as_arr(void) const noexcept { return reinterpret_cast<const T *>(this); };
+#endif
+
 	/*
-	template <typename T>
-	inline stvalue_t *unsafe_as_stvalue_arr(T *obj)
+	template <typename struct_t, typename element_t>
+	struct ArrAccessWrap
 	{
-		return (stvalue_t *)obj;
-	}
+		using struct_t::struct_t;
+		using struct_t::~struct_t;
 
-	template <typename T>
-	inline stvalue_t *unsafe_as_stvalue_arr(T &obj)
-	{
-		return (stvalue_t *)(&obj);
-	}
+		static size_t arr_size(void) noexcept
+		{
+			static_assert(sizeof(struct_t) % sizeof(element_t) == 0, "struct_t doesn't have a size in multiple of element_t");
+			return sizeof(struct_t) / sizeof(element_t);
+		};
+
+		element_t *as_arr(void) noexcept { return reinterpret_cast<element_t *>(this); };
+		const element_t *as_arr(void) const noexcept { return reinterpret_cast<const element_t *>(this); };
+	};
 	*/
-
-	template <typename T>
-	constexpr size_t stvalue_arr_size(void)
-	{
-		static_assert(sizeof(T) % agent_field_size == 0, "converted type doesn't have a multiple size of stvalue_t/bivalue_t");
-		return sizeof(T) / agent_field_size;
-	}
 
 } // namespace iebpr
 

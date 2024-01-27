@@ -43,7 +43,7 @@ namespace iebpr
 		Randomizer::RandConfig enable_tca;
 		Randomizer::RandConfig maint_polyp_first;
 		// array-like access
-		static const size_t arr_size;
+		with_access_as_arr(TraitRandConfig, Randomizer::RandConfig);
 
 		explicit TraitRandConfig(void) noexcept {}; // use member default ctor
 	};

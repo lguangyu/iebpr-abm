@@ -73,12 +73,12 @@ namespace iebpr
 			Randomizer::RandConfig *cfg_ptr = nullptr;
 
 			// state config
-			cfg_ptr = reinterpret_cast<Randomizer::RandConfig *>(&(v->state_cfg));
-			for (size_t i = 0; i < StateRandConfig::arr_size; i++)
+			cfg_ptr = v->state_cfg.as_arr();
+			for (size_t i = 0; i < StateRandConfig::arr_size(); i++)
 				if (auto ec = cfg_ptr[i].validate())
 					return ec;
 			// rate trait config
-			cfg_ptr = reinterpret_cast<Randomizer::RandConfig *>(&(v->trait_cfg));
+			cfg_ptr = v->trait_cfg.as_arr();
 			for (auto i = AgentTrait::rate_begin; i < AgentTrait::rate_end; i++)
 				if (auto ec = cfg_ptr[i].validate())
 					return ec;

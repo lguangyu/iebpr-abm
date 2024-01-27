@@ -16,7 +16,7 @@ namespace iebpr
 		stvalue_t pha;			 // store as absolute value, not content
 		stvalue_t polyp;		 // store as absolute value, not content
 		// array-like access utility
-		static const size_t arr_size;
+		with_access_as_arr(AgentState, stvalue_t);
 
 		explicit AgentState(void) noexcept
 			: biomass(0), split_biomass(0), glycogen(0), pha(0), polyp(0)
@@ -57,7 +57,7 @@ namespace iebpr
 		stvalue_t b_pha;
 		stvalue_t b_polyp;
 		// array-like access utility
-		static const size_t arr_size;
+		with_access_as_arr(AgentRateTrait, stvalue_t);
 	};
 
 	struct AgentRegularTrait
@@ -89,7 +89,7 @@ namespace iebpr
 		stvalue_t y_prel;
 		stvalue_t i_bmp;
 		// array-like access utility
-		static const size_t arr_size;
+		with_access_as_arr(AgentRegularTrait, stvalue_t);
 	};
 
 	struct AgentBoolTrait
@@ -98,7 +98,7 @@ namespace iebpr
 		bivalue_t enable_tca;
 		bivalue_t maint_polyp_first;
 		// array-like access utility
-		static const size_t arr_size;
+		with_access_as_arr(AgentBoolTrait, stvalue_t);
 	};
 
 	struct AgentTrait
@@ -107,9 +107,15 @@ namespace iebpr
 		AgentRegularTrait reg;
 		AgentBoolTrait bt;
 		// array-like access utility
-		static const size_t arr_size;
-		static const size_t rate_begin, reg_begin, bt_begin;
-		static const size_t rate_end, reg_end, bt_end;
+		with_access_as_arr(AgentTrait, stvalue_t);
+		// begin offset
+		static const size_t rate_begin = offsetof(AgentTrait, rate) / agent_field_size,
+							reg_begin = offsetof(AgentTrait, reg) / agent_field_size,
+							bt_begin = offsetof(AgentTrait, bt) / agent_field_size;
+		// end offset
+		static const size_t rate_end = rate_begin + AgentRateTrait::arr_size(),
+							reg_end = reg_begin + AgentRegularTrait::arr_size(),
+							bt_end = bt_begin + AgentBoolTrait::arr_size();
 
 		explicit AgentTrait(void) noexcept
 		{

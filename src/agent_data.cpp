@@ -2,22 +2,6 @@
 
 namespace iebpr
 {
-	// calc array-like access size
-	const size_t AgentState::arr_size = stvalue_arr_size<AgentState>();
-	const size_t AgentRateTrait::arr_size = stvalue_arr_size<AgentRateTrait>();
-	const size_t AgentRegularTrait::arr_size = stvalue_arr_size<AgentRegularTrait>();
-	const size_t AgentBoolTrait::arr_size = stvalue_arr_size<AgentBoolTrait>();
-	const size_t AgentTrait::arr_size = stvalue_arr_size<AgentTrait>();
-
-	// begin offset
-	const size_t AgentTrait::rate_begin = offsetof(AgentTrait, rate) / agent_field_size;
-	const size_t AgentTrait::reg_begin = offsetof(AgentTrait, reg) / agent_field_size;
-	const size_t AgentTrait::bt_begin = offsetof(AgentTrait, bt) / agent_field_size;
-	// end offset
-	const size_t AgentTrait::rate_end = AgentTrait::rate_begin + AgentRateTrait::arr_size;
-	const size_t AgentTrait::reg_end = AgentTrait::reg_begin + AgentRegularTrait::arr_size;
-	const size_t AgentTrait::bt_end = AgentTrait::bt_begin + AgentBoolTrait::arr_size;
-
 	void AgentState::clear_state_content(void) noexcept
 	{
 		std::memset(this, 0, sizeof(AgentState));
@@ -32,8 +16,8 @@ namespace iebpr
 			return;
 		}
 
-		stvalue_t *const val_ptr = reinterpret_cast<stvalue_t *>(this);
-		for (size_t i = 0; i < AgentState::arr_size; i++)
+		stvalue_t *const val_ptr = this->as_arr();
+		for (size_t i = 0; i < AgentState::arr_size(); i++)
 			*(val_ptr + i) *= factor;
 		return;
 	}
@@ -71,8 +55,8 @@ namespace iebpr
 	{
 		auto coef_other = 1.0 - coef_self;
 
-		stvalue_t *const val_ptr = reinterpret_cast<stvalue_t *>(this);
-		const stvalue_t *const oth_ptr = reinterpret_cast<const stvalue_t *>(&other);
+		stvalue_t *const val_ptr = this->as_arr();
+		const stvalue_t *const oth_ptr = other.as_arr();
 
 		// merge rate traits
 		for (auto i = rate_begin; i < rate_end; i++)

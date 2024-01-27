@@ -4,10 +4,6 @@
 
 namespace iebpr
 {
-	// calc array-like access size
-	const size_t StateRandConfig::arr_size = sizeof(StateRandConfig) / sizeof(Randomizer::RandConfig);
-	const size_t TraitRandConfig::arr_size = sizeof(TraitRandConfig) / sizeof(Randomizer::RandConfig);
-
 	AgentSubtypeBase::~AgentSubtypeBase(void) noexcept
 	{
 		return;
@@ -45,11 +41,11 @@ namespace iebpr
 	void AgentSubtypeBase::trait_cfg_apply_rate_adjust(stvalue_t timestep)
 	{
 		// refresh all rate scale to 1
-		for (size_t i = 0; i < TraitRandConfig::arr_size; i++)
-			reinterpret_cast<Randomizer::RandConfig *>(&trait_cfg)[i]._scale = 1;
+		for (size_t i = 0; i < TraitRandConfig::arr_size(); i++)
+			trait_cfg.as_arr()[i]._scale = 1;
 		// apply timestep as scale to these specific rate configs
 		for (auto i = AgentTrait::rate_begin; i < AgentTrait::rate_end; i++)
-			reinterpret_cast<Randomizer::RandConfig *>(&trait_cfg)[i]._scale = timestep;
+			trait_cfg.as_arr()[i]._scale = timestep;
 		return;
 	}
 
@@ -109,9 +105,8 @@ namespace iebpr
 
 	void AgentSubtypeBase::_randomize_agent_state(AgentState &state)
 	{
-		for (size_t i = 0; i < AgentState::arr_size; i++)
-			reinterpret_cast<stvalue_t *>(&state)[i] = _rand.gen_value(
-				reinterpret_cast<Randomizer::RandConfig *>(&state_cfg)[i]);
+		for (size_t i = 0; i < AgentState::arr_size(); i++)
+			state.as_arr()[i] = _rand.gen_value(state_cfg.as_arr()[i]);
 		assert(n_agent != 0);
 		state.scale_state_content(1.0 / n_agent);
 		// ajust specific states
@@ -123,8 +118,8 @@ namespace iebpr
 
 	void AgentSubtypeBase::_randomize_agent_trait(AgentTrait &trait)
 	{
-		stvalue_t *const val_ptr = reinterpret_cast<stvalue_t *>(&trait);
-		Randomizer::RandConfig *const cfg_ptr = reinterpret_cast<Randomizer::RandConfig *>(&trait_cfg);
+		stvalue_t *const val_ptr = trait.as_arr();
+		const Randomizer::RandConfig *const cfg_ptr = trait_cfg.as_arr();
 
 		// generate rate traits
 		for (auto i = AgentTrait::rate_begin; i < AgentTrait::rate_end; i++)

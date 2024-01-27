@@ -13,7 +13,7 @@ namespace iebpr
 	struct EnvStateRecData : public EnvState
 	{
 		// array-like access
-		static const size_t arr_size;
+		with_access_as_arr(EnvStateRecData, stvalue_t);
 
 		explicit EnvStateRecData(void) noexcept
 			: EnvState(){}; // use member ctor
@@ -29,7 +29,7 @@ namespace iebpr
 		stvalue_t pha;
 		stvalue_t polyp;
 		// array-like access
-		static const size_t arr_size;
+		with_access_as_arr(AgentStateRecData, stvalue_t);
 
 		explicit AgentStateRecData(void) noexcept
 			: biomass(0), rela_count(0), glycogen(0), pha(0), polyp(0) {}
