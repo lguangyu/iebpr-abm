@@ -17,7 +17,7 @@ namespace iebpr
 		}
 
 		stvalue_t *const val_ptr = this->as_arr();
-		for (size_t i = 0; i < AgentState::arr_size(); i++)
+		for (size_t i = 0; i < arr_size(); i++)
 			*(val_ptr + i) *= factor;
 		return;
 	}
@@ -59,11 +59,11 @@ namespace iebpr
 		const stvalue_t *const oth_ptr = other.as_arr();
 
 		// merge rate traits
-		for (auto i = rate_begin; i < rate_end; i++)
+		for (auto i = rate_begin(); i < rate_end(); i++)
 			val_ptr[i] = val_ptr[i] * coef_self + oth_ptr[i] * coef_other;
 
 		// merge regular traits
-		for (auto i = reg_begin; i < reg_end; i++)
+		for (auto i = reg_begin(); i < reg_end(); i++)
 			val_ptr[i] = val_ptr[i] * coef_self + oth_ptr[i] * coef_other;
 
 		// merge bool traits

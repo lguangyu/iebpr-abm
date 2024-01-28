@@ -63,7 +63,7 @@ namespace iebpr
 		// env state record
 		env_state_rec.push_back(sbr.env);
 		// agent state record
-		auto rec = std::vector<AgentStateRecData>(0);
+		auto rec = std::vector<AgentStateRecEntry>(0);
 		for (auto &v : pool.agent_subtype)
 			rec.push_back(v->summarize_agent_state_cont());
 		agent_state_rec.push_back(rec);
@@ -81,12 +81,12 @@ namespace iebpr
 		for (size_t i = 0; i < pool.n_subtype(); i++)
 		{
 			auto _n = pool.agent_subtype[i]->n_agent;
-			auto snapshot = std::vector<AgentStateRecData>(_n);
+			auto snapshot = std::vector<AgentStateRecEntry>(_n);
 			std::transform(pool.agent_subtype[i]->pool_begin(),
 						   pool.agent_subtype[i]->pool_end(),
 						   snapshot.begin(),
 						   [](const AgentData &agent)
-						   { return AgentStateRecData(agent.state); });
+						   { return AgentStateRecEntry(agent.state); });
 			snapshot_rec[i].push_back(std::move(snapshot));
 		}
 		//

@@ -79,15 +79,15 @@ namespace iebpr
 					return ec;
 			// rate trait config
 			cfg_ptr = v->trait_cfg.as_arr();
-			for (auto i = AgentTrait::rate_begin; i < AgentTrait::rate_end; i++)
+			for (auto i = AgentTrait::rate_begin(); i < AgentTrait::rate_end(); i++)
 				if (auto ec = cfg_ptr[i].validate())
 					return ec;
 			// regular trait config
-			for (auto i = AgentTrait::reg_begin; i < AgentTrait::reg_end; i++)
+			for (auto i = AgentTrait::reg_begin(); i < AgentTrait::reg_end(); i++)
 				if (auto ec = cfg_ptr[i].validate())
 					return ec;
 			// bool trait config
-			for (auto i = AgentTrait::bt_begin; i < AgentTrait::bt_end; i++)
+			for (auto i = AgentTrait::bt_begin(); i < AgentTrait::bt_end(); i++)
 			{
 				if ((cfg_ptr[i].type != Randomizer::rand_t::none) &&
 					(cfg_ptr[i].type != Randomizer::rand_t::bernoulli))
@@ -112,6 +112,7 @@ namespace iebpr
 			_set_agent_data(*v, curr_pool_begin);
 			curr_pool_begin += v->n_agent;
 			// instantiate agents
+			v->state_cfg_apply_num_adjust();
 			v->trait_cfg_apply_rate_adjust(timestep);
 			v->instantiate_agents();
 		}

@@ -3,6 +3,7 @@
 
 #include "randomizer.hpp"
 #include "agent_data.hpp"
+#include "agent_subtype_consts.hpp"
 
 namespace iebpr
 {
@@ -46,6 +47,11 @@ namespace iebpr
 		with_access_as_arr(TraitRandConfig, Randomizer::RandConfig);
 
 		explicit TraitRandConfig(void) noexcept {}; // use member default ctor
+
+		// apply adjust to n_agent
+		void adjust_to_timestep(stvalue_t timestep) noexcept;
+		// generate set of values
+		void randomize(Randomizer &rand, AgentTrait &trait);
 	};
 
 // ensure TraitRandConfig is aligned with AgentTrait

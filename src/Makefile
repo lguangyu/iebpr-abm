@@ -10,7 +10,7 @@ NUMPY_PREFIX ?= $(PYTHON_LIB)/python$(PYTHON_VERSION)/site-packages/numpy/core
 NUMPY_INCLUDE ?= $(NUMPY_PREFIX)/include
 NUMPY_LIB ?= $(NUMPY_PREFIX)/lib
 
-CFLAGS := -g -O0 -Wall -Wno-sign-compare -Wno-missing-braces -Werror $(CFLAGS)
+CFLAGS := -g -O0 -Wall -Wextra -Wno-sign-compare -Wno-missing-braces $(CFLAGS)
 LDFLAGS := $(LDFLAGS)
 LIBS := $(LIBS)
 

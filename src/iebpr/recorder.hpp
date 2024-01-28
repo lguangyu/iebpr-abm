@@ -10,18 +10,18 @@
 
 namespace iebpr
 {
-	struct EnvStateRecData : public EnvState
+	struct EnvStateRecEntry : public EnvState
 	{
 		// array-like access
-		with_access_as_arr(EnvStateRecData, stvalue_t);
+		with_access_as_arr(EnvStateRecEntry, stvalue_t);
 
-		explicit EnvStateRecData(void) noexcept
+		explicit EnvStateRecEntry(void) noexcept
 			: EnvState(){}; // use member ctor
-		EnvStateRecData(const EnvState &other) noexcept
+		EnvStateRecEntry(const EnvState &other) noexcept
 			: EnvState(other){};
 	};
 
-	struct AgentStateRecData
+	struct AgentStateRecEntry
 	{
 		stvalue_t biomass;
 		stvalue_t rela_count;
@@ -29,12 +29,12 @@ namespace iebpr
 		stvalue_t pha;
 		stvalue_t polyp;
 		// array-like access
-		with_access_as_arr(AgentStateRecData, stvalue_t);
+		with_access_as_arr(AgentStateRecEntry, stvalue_t);
 
-		explicit AgentStateRecData(void) noexcept
+		explicit AgentStateRecEntry(void) noexcept
 			: biomass(0), rela_count(0), glycogen(0), pha(0), polyp(0) {}
 
-		AgentStateRecData(const AgentState &state) noexcept
+		AgentStateRecEntry(const AgentState &state) noexcept
 			: biomass(state.biomass), rela_count(state.rela_count),
 			  glycogen(state.glycogen), pha(state.pha), polyp(state.polyp)
 		{
@@ -46,9 +46,9 @@ namespace iebpr
 	public:
 		std::vector<stvalue_t> state_rec_timepoints;
 		std::vector<stvalue_t> snapshot_rec_timepoints;
-		std::vector<EnvStateRecData> env_state_rec;
-		std::vector<std::vector<AgentStateRecData>> agent_state_rec;
-		std::vector<std::vector<std::vector<AgentStateRecData>>> snapshot_rec;
+		std::vector<EnvStateRecEntry> env_state_rec;
+		std::vector<std::vector<AgentStateRecEntry>> agent_state_rec;
+		std::vector<std::vector<std::vector<AgentStateRecEntry>>> snapshot_rec;
 
 	private:
 		decltype(state_rec_timepoints)::iterator _next_state_rec_time_itr;

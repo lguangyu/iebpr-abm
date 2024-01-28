@@ -3,6 +3,7 @@
 
 #include "randomizer.hpp"
 #include "agent_data.hpp"
+#include "agent_subtype_consts.hpp"
 
 namespace iebpr
 {
@@ -18,6 +19,11 @@ namespace iebpr
 		with_access_as_arr(StateRandConfig, Randomizer::RandConfig);
 
 		explicit StateRandConfig(void) noexcept {}; // use member default ctor
+
+		// apply adjust to n_agent
+		void adjust_to_n_agent(size_t n_agent) noexcept;
+		// generate set of values
+		void randomize(Randomizer &rand, AgentState &state);
 	};
 
 // ensure StateRandConfig is aligned with AgentState field-wise

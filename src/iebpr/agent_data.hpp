@@ -109,13 +109,13 @@ namespace iebpr
 		// array-like access utility
 		with_access_as_arr(AgentTrait, stvalue_t);
 		// begin offset
-		static const size_t rate_begin = offsetof(AgentTrait, rate) / agent_field_size,
-							reg_begin = offsetof(AgentTrait, reg) / agent_field_size,
-							bt_begin = offsetof(AgentTrait, bt) / agent_field_size;
+		static constexpr size_t rate_begin() { return offsetof(AgentTrait, rate) / agent_field_size; };
+		static constexpr size_t reg_begin() { return offsetof(AgentTrait, reg) / agent_field_size; };
+		static constexpr size_t bt_begin() { return offsetof(AgentTrait, bt) / agent_field_size; };
 		// end offset
-		static const size_t rate_end = rate_begin + AgentRateTrait::arr_size(),
-							reg_end = reg_begin + AgentRegularTrait::arr_size(),
-							bt_end = bt_begin + AgentBoolTrait::arr_size();
+		static constexpr size_t rate_end() { return rate_begin() + AgentRateTrait::arr_size(); };
+		static constexpr size_t reg_end() { return reg_begin() + AgentRegularTrait::arr_size(); };
+		static constexpr size_t bt_end() { return bt_begin() + AgentBoolTrait::arr_size(); };
 
 		explicit AgentTrait(void) noexcept
 		{

@@ -9,7 +9,7 @@ namespace iebpr
 	{
 		// AgentState.split_biomass will not be smaller than this value times
 		// the initial AgentState.biomass
-		constexpr stvalue_t MIN_RELA_SPLIT_BIOMASS = 1.0;
+		constexpr stvalue_t MIN_RELA_SPLIT_BIOMASS = 1.5;
 		// the initial AgentState.rela_count constant
 		constexpr stvalue_t INIT_RELA_COUNT = 1.0;
 

@@ -81,8 +81,10 @@ namespace iebpr
 		bool has_data_overlap_with(const AgentSubtypeBase &other) const noexcept;
 		// report subtype and number of agents
 		SubtypeSizeReport report_subtype_and_size(void) const noexcept;
+		// apply n_agent state rand configs
+		void state_cfg_apply_num_adjust(void) noexcept;
 		// apply timestep to rate rand configs for optimization before simulation run
-		void trait_cfg_apply_rate_adjust(stvalue_t timestep);
+		void trait_cfg_apply_rate_adjust(stvalue_t timestep) noexcept;
 		// fill agent state and trait, use generated random values
 		void instantiate_agents(void);
 		// update env and agent state, check agent split in the end
@@ -111,10 +113,6 @@ namespace iebpr
 		void agent_split(agent_itr_t agent_itr);
 		// summarize current state of agents
 		AgentState summarize_agent_state_cont(void) const noexcept;
-
-	private:
-		void _randomize_agent_state(AgentState &state);
-		void _randomize_agent_trait(AgentTrait &trait);
 	};
 
 } // namespace iebpr

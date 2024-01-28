@@ -26,7 +26,7 @@ namespace iebpr
 								   "is_aerobic", "i8");
 			if (!o)
 				return -1;
-			assert(PyList_Size(o) == EnvStateRecData::arr_size());
+			assert(PyList_Size(o) == EnvStateRecEntry::arr_size());
 			conv_res = PyArray_DescrConverter(o, (PyArray_Descr **)&EnvStateRecDescr);
 			Py_DECREF(o);
 			if (!conv_res)
@@ -46,7 +46,7 @@ namespace iebpr
 								   "polyp", "f8");
 			if (!o)
 				return -1;
-			assert(PyList_Size(o) == AgentStateRecData::arr_size());
+			assert(PyList_Size(o) == AgentStateRecEntry::arr_size());
 			conv_res = PyArray_DescrConverter(o, (PyArray_Descr **)&AgentStateRecDescr);
 			Py_DECREF(o);
 			if (!conv_res)
@@ -360,13 +360,13 @@ namespace iebpr
 			// find matrix dimensions
 			const Py_intptr_t dims[1] = {
 				(Py_intptr_t)(vec.size())};
-			EnvStateRecData *d_ptr = nullptr;
+			EnvStateRecEntry *d_ptr = nullptr;
 			// create numpy object
 			PyObject *ret = PyArray_Zeros(1, dims, (PyArray_Descr *)EnvStateRecDescr, 0);
 			if (!ret)
 				goto fail;
 			// fill in values
-			d_ptr = (EnvStateRecData *)PyArray_DATA((PyArrayObject *)ret);
+			d_ptr = (EnvStateRecEntry *)PyArray_DATA((PyArrayObject *)ret);
 			for (Py_intptr_t i = 0; i < dims[0]; i++)
 			{
 				*d_ptr = vec[i];
@@ -386,13 +386,13 @@ namespace iebpr
 			const Py_intptr_t dims[2] = {
 				(Py_intptr_t)(vec.size()),
 				(Py_intptr_t)(vec.size() ? vec[0].size() : 0)};
-			AgentStateRecData *d_ptr;
+			AgentStateRecEntry *d_ptr;
 			// create numpy object
 			PyObject *ret = PyArray_Zeros(2, dims, (PyArray_Descr *)AgentStateRecDescr, 0);
 			if (!ret)
 				goto fail;
 			// fill in values
-			d_ptr = (AgentStateRecData *)PyArray_DATA((PyArrayObject *)ret);
+			d_ptr = (AgentStateRecEntry *)PyArray_DATA((PyArrayObject *)ret);
 			for (Py_intptr_t i = 0; i < dims[0]; i++)
 				for (Py_intptr_t j = 0; j < dims[1]; j++)
 				{
@@ -421,13 +421,13 @@ namespace iebpr
 				const Py_intptr_t dims[2] = {
 					(Py_intptr_t)(vec[i].size()),
 					(Py_intptr_t)(vec[i].size() ? vec[i][0].size() : 0)};
-				AgentStateRecData *d_ptr = nullptr;
+				AgentStateRecEntry *d_ptr = nullptr;
 				// create numpy object
 				PyObject *t = PyArray_Zeros(2, dims, (PyArray_Descr *)AgentStateRecDescr, 0);
 				if (!t)
 					goto tuple_build_fail;
 				// fill in values
-				d_ptr = (AgentStateRecData *)PyArray_DATA((PyArrayObject *)t);
+				d_ptr = (AgentStateRecEntry *)PyArray_DATA((PyArrayObject *)t);
 				for (Py_intptr_t j = 0; j < dims[0]; j++)
 					for (Py_intptr_t k = 0; k < dims[1]; k++)
 					{

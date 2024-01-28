@@ -38,14 +38,15 @@ namespace iebpr
 		return ret;
 	}
 
-	void AgentSubtypeBase::trait_cfg_apply_rate_adjust(stvalue_t timestep)
+	void AgentSubtypeBase::state_cfg_apply_num_adjust(void) noexcept
 	{
-		// refresh all rate scale to 1
-		for (size_t i = 0; i < TraitRandConfig::arr_size(); i++)
-			trait_cfg.as_arr()[i]._scale = 1;
-		// apply timestep as scale to these specific rate configs
-		for (auto i = AgentTrait::rate_begin; i < AgentTrait::rate_end; i++)
-			trait_cfg.as_arr()[i]._scale = timestep;
+		state_cfg.adjust_to_n_agent(n_agent);
+		return;
+	}
+
+	void AgentSubtypeBase::trait_cfg_apply_rate_adjust(stvalue_t timestep) noexcept
+	{
+		trait_cfg.adjust_to_timestep(timestep);
 		return;
 	}
 
@@ -53,8 +54,8 @@ namespace iebpr
 	{
 		for (agent_itr_t itr = pool_begin(); itr < pool_end(); itr++)
 		{
-			_randomize_agent_state(itr->state);
-			_randomize_agent_trait(itr->trait);
+			state_cfg.randomize(_rand, itr->state);
+			trait_cfg.randomize(_rand, itr->trait);
 		}
 		return;
 	}
@@ -99,42 +100,7 @@ namespace iebpr
 		// the merged one is used for the new split agent
 		to_merge_itrs[0]->state = split_state;
 		// trait of the new split will be randomized (approximate mutation (?))
-		_randomize_agent_trait(to_merge_itrs[0]->trait);
-		return;
-	}
-
-	void AgentSubtypeBase::_randomize_agent_state(AgentState &state)
-	{
-		for (size_t i = 0; i < AgentState::arr_size(); i++)
-			state.as_arr()[i] = _rand.gen_value(state_cfg.as_arr()[i]);
-		assert(n_agent != 0);
-		state.scale_state_content(1.0 / n_agent);
-		// ajust specific states
-		state.rela_count = agent_subtype_consts::INIT_RELA_COUNT;
-		state.split_biomass = std::max(state.split_biomass,
-									   state.biomass * agent_subtype_consts::MIN_RELA_SPLIT_BIOMASS);
-		return;
-	}
-
-	void AgentSubtypeBase::_randomize_agent_trait(AgentTrait &trait)
-	{
-		stvalue_t *const val_ptr = trait.as_arr();
-		const Randomizer::RandConfig *const cfg_ptr = trait_cfg.as_arr();
-
-		// generate rate traits
-		for (auto i = AgentTrait::rate_begin; i < AgentTrait::rate_end; i++)
-			val_ptr[i] = _rand.gen_value(cfg_ptr[i]);
-
-		// generate regula traits
-		for (auto i = AgentTrait::reg_begin; i < AgentTrait::reg_end; i++)
-			val_ptr[i] = _rand.gen_value(cfg_ptr[i]);
-
-		// generate bool traits
-		for (auto i = AgentTrait::bt_begin; i < AgentTrait::bt_end; i++)
-		{
-			auto v = _rand.gen_value(cfg_ptr[i]);
-			std::memcpy(val_ptr + i, &v, agent_field_size);
-		}
+		trait_cfg.randomize(_rand, to_merge_itrs[0]->trait);
 		return;
 	}
 
