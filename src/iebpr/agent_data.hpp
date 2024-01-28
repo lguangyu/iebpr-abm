@@ -19,7 +19,7 @@ namespace iebpr
 		with_access_as_arr(AgentState, stvalue_t);
 
 		explicit AgentState(void) noexcept
-			: biomass(0), split_biomass(0), glycogen(0), pha(0), polyp(0)
+			: biomass(0), rela_count(0), split_biomass(0), glycogen(0), pha(0), polyp(0)
 		{
 		}
 
@@ -58,6 +58,11 @@ namespace iebpr
 		stvalue_t b_polyp;
 		// array-like access utility
 		with_access_as_arr(AgentRateTrait, stvalue_t);
+
+		AgentRateTrait(void) noexcept
+		{
+			std::memset(this, 0, sizeof(AgentRateTrait));
+		}
 	};
 
 	struct AgentRegularTrait
@@ -90,6 +95,11 @@ namespace iebpr
 		stvalue_t i_bmp;
 		// array-like access utility
 		with_access_as_arr(AgentRegularTrait, stvalue_t);
+
+		AgentRegularTrait(void) noexcept
+		{
+			std::memset(this, 0, sizeof(AgentRegularTrait));
+		}
 	};
 
 	struct AgentBoolTrait
@@ -99,6 +109,11 @@ namespace iebpr
 		bivalue_t maint_polyp_first;
 		// array-like access utility
 		with_access_as_arr(AgentBoolTrait, stvalue_t);
+
+		AgentBoolTrait(void) noexcept
+		{
+			std::memset(this, 0, sizeof(AgentBoolTrait));
+		}
 	};
 
 	struct AgentTrait
@@ -118,8 +133,8 @@ namespace iebpr
 		static constexpr size_t bt_end() { return bt_begin() + AgentBoolTrait::arr_size(); };
 
 		explicit AgentTrait(void) noexcept
+			: rate(), reg(), bt()
 		{
-			std::memset(this, 0, sizeof(AgentTrait));
 		}
 
 		//======================================================================

@@ -18,7 +18,12 @@ namespace iebpr
 		// array-like access
 		with_access_as_arr(StateRandConfig, Randomizer::RandConfig);
 
-		explicit StateRandConfig(void) noexcept {}; // use member default ctor
+		explicit StateRandConfig(void) noexcept
+		{
+			// the rela_count is special
+			rela_count.type = Randomizer::rand_t::constant;
+			rela_count.mean = agent_subtype_consts::INIT_RELA_COUNT;
+		};
 
 		// apply adjust to n_agent
 		void adjust_to_n_agent(size_t n_agent) noexcept;

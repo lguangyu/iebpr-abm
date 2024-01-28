@@ -65,7 +65,7 @@ namespace iebpr
 		// agent state record
 		auto rec = std::vector<AgentStateRecEntry>(0);
 		for (auto &v : pool.agent_subtype)
-			rec.push_back(v->summarize_agent_state_cont());
+			rec.push_back(v->summarize_agent_state());
 		agent_state_rec.push_back(rec);
 		//
 		_next_state_rec_time_itr++;

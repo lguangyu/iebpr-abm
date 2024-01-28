@@ -121,8 +121,12 @@ namespace iebpr
 			d_env.op_conc += delta;
 		}
 		// update to agent
+		assert(d_state.rela_count == 0);
 		assert(d_state.split_biomass == 0);
 		agent.state.merge_with(d_state);
+		assert((agent.state.rela_count != stvalue_inf) &&
+			   (agent.state.rela_count != -stvalue_inf) &&
+			   (agent.state.rela_count != stvalue_nan));
 		return;
 	}
 
@@ -218,8 +222,12 @@ namespace iebpr
 			d_env.op_conc += delta;
 		}
 		// update to agent
+		assert(d_state.rela_count == 0);
 		assert(d_state.split_biomass == 0);
 		agent.state.merge_with(d_state);
+		assert((agent.state.rela_count != stvalue_inf) &&
+			   (agent.state.rela_count != -stvalue_inf) &&
+			   (agent.state.rela_count != stvalue_nan));
 		return;
 	}
 

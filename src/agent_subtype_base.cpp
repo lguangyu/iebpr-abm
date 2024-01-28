@@ -104,7 +104,7 @@ namespace iebpr
 		return;
 	}
 
-	AgentState AgentSubtypeBase::summarize_agent_state_cont(void) const noexcept
+	AgentState AgentSubtypeBase::summarize_agent_state(void) const noexcept
 	{
 		AgentState ret = AgentState();
 

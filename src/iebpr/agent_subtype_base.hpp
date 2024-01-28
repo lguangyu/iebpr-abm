@@ -112,7 +112,7 @@ namespace iebpr
 		// called when agent biomass >= split_biomass
 		void agent_split(agent_itr_t agent_itr);
 		// summarize current state of agents
-		AgentState summarize_agent_state_cont(void) const noexcept;
+		AgentState summarize_agent_state(void) const noexcept;
 	};
 
 } // namespace iebpr
