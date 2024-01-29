@@ -28,8 +28,7 @@ ext__iebpr = setuptools.Extension(
 	define_macros=[],
 	library_dirs=[],
 	libraries=[],
-	extra_compile_args=["-std=c++11", "-g0", "-O3", "-Wall",
-		"-Wno-missing-braces"],
+	extra_compile_args=["-std=c++11", "-Wall", "-Wno-missing-braces"],
 	extra_link_args=[],
 	# py_limited_api=True,
 )

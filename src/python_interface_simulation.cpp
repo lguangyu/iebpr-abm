@@ -20,11 +20,9 @@ namespace iebpr
 
 		// a wrapper of Py_BuildValue and PyArray_DescrConverter
 		// create a PyArray_Descr from format tuple
-		// size_check as only debug perposes
 		static int conv_descr(PyObject *const *export_ptr_const, size_t size_check,
 							  const char *format, ...)
 		{
-			int res;
 			// build the format tuple
 			std::va_list args;
 			va_start(args, format);
@@ -32,13 +30,25 @@ namespace iebpr
 			va_end(args);
 			if (!o)
 				goto fail;
-			assert(PyTuple_Size(o) == size_check);
-			res = PyArray_DescrConverter(o, (PyArray_Descr **)export_ptr_const);
+			// check size is aligned
+			if (PySequence_Size(o) != (Py_ssize_t)size_check)
+			{
+				PyErr_Format(PyExc_ValueError, "bad number of dtype fields "
+											   "(%li), excepted %lu; this is "
+											   "likely an internal error",
+							 PySequence_Size(o), size_check);
+				goto fail_decref;
+			}
 			assert(Py_REFCNT(o) == 1);
+			if (!PyArray_DescrConverter(o, (PyArray_Descr **)export_ptr_const))
+				goto fail_decref;
+			// looks like numpy holds a ref here
+			// no need to Py_DECREF() the PyArray_Descr object
+			assert(Py_REFCNT(*export_ptr_const) == 1);
 			Py_DECREF(o);
-			if (!res)
-				goto fail;
 			return 0;
+		fail_decref:
+			Py_DECREF(o);
 		fail:
 			return -1;
 		}
