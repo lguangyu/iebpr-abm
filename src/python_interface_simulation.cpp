@@ -1,6 +1,7 @@
 #ifndef NO_PYTHON_INTERFACE
 
 #include <cstring>
+#include <cstdarg>
 // numpy stuff
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #define PY_ARRAY_UNIQUE_SYMBOL _IEBPR_NPY_API
@@ -12,47 +13,34 @@ namespace iebpr
 {
 	namespace python_interface
 	{
-		// used to generate record return values
-		PyObject *EnvStateRecDescr;
-		PyObject *AgentStateRecDescr;
+		// dtype of ndarray, in generating record return values
+		// will be filled by module_bind_simulation() call
+		PyObject *EnvStateRecDescr = nullptr;
+		PyObject *AgentStateRecDescr = nullptr;
 
-		static int EnvStateRecDescr_create(void)
+		// a wrapper of Py_BuildValue and PyArray_DescrConverter
+		// create a PyArray_Descr from format tuple
+		// size_check as only debug perposes
+		static int conv_descr(PyObject *const *export_ptr_const, size_t size_check,
+							  const char *format, ...)
 		{
-			int conv_res;
-			auto o = Py_BuildValue("[(s, s), (s, s), (s, s), (s, s)]",
-								   "volume", "f8",
-								   "vfa_conc", "f8",
-								   "op_conc", "f8",
-								   "is_aerobic", "i8");
+			int res;
+			// build the format tuple
+			std::va_list args;
+			va_start(args, format);
+			auto o = Py_VaBuildValue(format, args);
+			va_end(args);
 			if (!o)
-				return -1;
-			assert(PyList_Size(o) == EnvStateRecEntry::arr_size());
-			conv_res = PyArray_DescrConverter(o, (PyArray_Descr **)&EnvStateRecDescr);
+				goto fail;
+			assert(PyTuple_Size(o) == size_check);
+			res = PyArray_DescrConverter(o, (PyArray_Descr **)export_ptr_const);
+			assert(Py_REFCNT(o) == 1);
 			Py_DECREF(o);
-			if (!conv_res)
-				return -1;
-			assert(Py_REFCNT(EnvStateRecDescr) == 1);
+			if (!res)
+				goto fail;
 			return 0;
-		}
-
-		static int AgentStateRecDescr_create(void)
-		{
-			int conv_res;
-			auto o = Py_BuildValue("[(s, s), (s, s), (s, s), (s, s), (s, s)]",
-								   "biomass", "f8",
-								   "rela_count", "f8",
-								   "glycogen", "f8",
-								   "pha", "f8",
-								   "polyp", "f8");
-			if (!o)
-				return -1;
-			assert(PyList_Size(o) == AgentStateRecEntry::arr_size());
-			conv_res = PyArray_DescrConverter(o, (PyArray_Descr **)&AgentStateRecDescr);
-			Py_DECREF(o);
-			if (!conv_res)
-				return -1;
-			assert(Py_REFCNT(AgentStateRecDescr) == 1);
-			return 0;
+		fail:
+			return -1;
 		}
 
 		using simutype_enum = decltype(SbrControl::simutype);
@@ -621,22 +609,25 @@ namespace iebpr
 			{"seed", nullptr, SimulationPyObjectType_set_seed, "random seed <- int", nullptr},
 			// SbrControll
 			{"pcontinuous", SimulationPyObjectType_get_pcontinuous,
-			 SimulationPyObjectType_set_pcontinuous, "use pseudo-continuous simulation (True) or discrete-time (False) <-> bool"},
+			 SimulationPyObjectType_set_pcontinuous,
+			 "use pseudo-continuous simulation (True) or discrete-time (False) <-> bool",
+			 nullptr},
 			{"init_env", nullptr, SimulationPyObjectType_set_init_env,
-			 "initial environment states <- EnvState"},
+			 "initial environment states <- EnvState", nullptr},
 			{"timestep", SimulationPyObjectType_get_timestep,
 			 SimulationPyObjectType_set_timestep, "simulation timestep, must be positive <-> float\n"
 												  "timestep should take balance between slow simulation (when too small) "
-												  "and losing precision (when too large)"},
+												  "and losing precision (when too large)",
+			 nullptr},
 			{"total_time_len", SimulationPyObjectType_get_total_time_len, nullptr,
-			 "total time length of the simulation -> float"},
+			 "total time length of the simulation -> float", nullptr},
 			// AgentPool
 			{"n_agent_subtype", SimulationPyObjectType_get_n_agent_subtype, nullptr,
-			 "total number of agent subtypes added to simulation -> int"},
+			 "total number of agent subtypes added to simulation -> int", nullptr},
 			{"total_n_agent", SimulationPyObjectType_get_total_n_agent, nullptr,
-			 "total number of agents in all subtypes -> int"},
+			 "total number of agents in all subtypes -> int", nullptr},
 			{"n_agent_by_subtype", SimulationPyObjectType_get_n_agent_by_subtype, nullptr,
-			 "list number of agents for each added subtype -> tuple[tuple[str, int]]"},
+			 "list number of agents for each added subtype -> tuple[tuple[str, int]]", nullptr},
 			// Recorder
 			{"n_state_rec_timepoints", SimulationPyObjectType_get_n_state_rec_timepoints, nullptr,
 			 "number of timepoints set for state record -> int", nullptr},
@@ -696,19 +687,18 @@ namespace iebpr
 
 		static PyTypeObject SimulationPyObjectType = {
 			// head
-			PyObject_HEAD_INIT(&PyType_Type)
+			PyVarObject_HEAD_INIT(&PyType_Type, 0)
 			// class def
-			"_iebpr.Simulation",		// class name
+			"iebpr._iebpr.Simulation",	// tp_name (char *), class name
 			sizeof(SimulationPyObject), // tp_basicsize
 			0,							// tp_itemsize
 			// basic methods
-			SimulationPyObjectType_tp_dealloc, // (destructor) tp_dealloc, release member PyObject
-			0,								   // tp_print, deprecated in python 3.x
-			nullptr,						   // tp_getattr, deprecated
-			nullptr,						   // tp_setattr, deprecated
-			nullptr,						   // tp_as_async (PyAsyncMethods*)
-			nullptr,						   // tp_repr (reprfunc)
-			// standard magic methods
+			SimulationPyObjectType_tp_dealloc,		  // (destructor) tp_dealloc, release member PyObject
+			0,										  // tp_vectorcall_offset
+			nullptr,								  // tp_getattr, deprecated
+			nullptr,								  // tp_setattr, deprecated
+			nullptr,								  // tp_as_async (PyAsyncMethods*)
+			nullptr,								  // tp_repr (reprfunc)
 			nullptr,								  // tp_as_number (PyNumberMethods *)
 			nullptr,								  // tp_as_sequence (PySequenceMethods *)
 			nullptr,								  // tp_as_mapping (PyMappingMethods *)
@@ -719,15 +709,14 @@ namespace iebpr
 			PyObject_GenericSetAttr,				  // tp_setattro (setattrofunc), i.e. self.__setattr__()
 			nullptr,								  // tp_as_buffer (PyBufferProcs *)
 			Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, // tp_flags, unsigned long
-			// tp_doc (char *), docstring
-			"Simulation(**kw)\n--\n"
-			"iEBPR simulation manager\n"
-			"arguments:\n"
-			"           seed: int = 0\n"
-			"    pcontinuous: bool = False\n"
-			"       timestep: float = 1e-5\n"
-			"       init_env: EnvState = EnvState()\n"
-			"\nsee \'data descriptor\' section below for details\n",
+			PyDoc_STR("Simulation(**kw)\n--\n"		  // tp_doc (char *), docstring
+					  "iEBPR simulation manager\n"
+					  "arguments:\n"
+					  "           seed: int = 0\n"
+					  "    pcontinuous: bool = False\n"
+					  "       timestep: float = 1e-5\n"
+					  "       init_env: EnvState = EnvState()\n"
+					  "\nsee \'data descriptor\' section below for details\n"),
 			nullptr,						// tp_traverse (traverseproc), traverse through members
 			nullptr,						// tp_clear (inquiry), delete members
 			nullptr,						// tp_richcompare (richcmpfunc), rich-comparison
@@ -755,6 +744,7 @@ namespace iebpr
 			nullptr,						// tp_del, i.e. self.__del__()
 			0,								// tp_version_tag, unsigned int
 			nullptr,						// tp_finalize (destructor)
+			nullptr,						// tp_vectorcall (vectorcallfunc)
 		};
 
 		//======================================================================
@@ -766,10 +756,22 @@ namespace iebpr
 		int module_bind_simulation(PyObject *m)
 		{
 			// add pyarray descriptors
-			if (EnvStateRecDescr_create() ||
+			if (conv_descr(&EnvStateRecDescr, EnvStateRecEntry::arr_size(),
+						   "[(s, s), (s, s), (s, s), (s, s)]",
+						   "volume", "f8",
+						   "vfa_conc", "f8",
+						   "op_conc", "f8",
+						   "is_aerobic", "i8") ||
 				PyModule_AddObjectRef(m, "EnvStateRecDescr", EnvStateRecDescr))
 				return -1;
-			if (AgentStateRecDescr_create() ||
+
+			if (conv_descr(&AgentStateRecDescr, AgentStateRecEntry::arr_size(),
+						   "[(s, s), (s, s), (s, s), (s, s), (s, s)]",
+						   "biomass", "f8",
+						   "rela_count", "f8",
+						   "glycogen", "f8",
+						   "pha", "f8",
+						   "polyp", "f8") ||
 				PyModule_AddObjectRef(m, "AgentStateRecDescr", AgentStateRecDescr))
 				return -1;
 

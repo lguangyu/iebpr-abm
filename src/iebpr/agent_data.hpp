@@ -19,8 +19,8 @@ namespace iebpr
 		with_access_as_arr(AgentState, stvalue_t);
 
 		explicit AgentState(void) noexcept
-			: biomass(0), rela_count(0), split_biomass(0), glycogen(0), pha(0), polyp(0)
 		{
+			std::memset(this, 0, sizeof(AgentState));
 		}
 
 		//======================================================================

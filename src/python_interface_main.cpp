@@ -14,8 +14,9 @@ namespace iebpr
 {
 	namespace python_interface
 	{
-		PyObject *PyExc_IebprError;
-		PyObject *PyExc_IebprPrerunValidateError;
+		// these will be filled in by add_iebpr_exception()
+		PyObject *PyExc_IebprError = nullptr;
+		PyObject *PyExc_IebprPrerunValidateError = nullptr;
 
 		static PyMethodDef _iebpr_methods[] = {
 			{nullptr, nullptr, 0, nullptr},
@@ -27,26 +28,30 @@ namespace iebpr
 
 		static PyModuleDef _iebpr_def = {
 			PyModuleDef_HEAD_INIT,
-			.m_name = "_iebpr",								// module name
-			.m_doc = "python binding of iEBPR C++ library", // docstr
+			.m_name = "_iebpr",										   // module name
+			.m_doc = PyDoc_STR("python binding of iEBPR C++ library"), // docstr
 			.m_size = -1,
 			.m_methods = _iebpr_methods, //_iebpr_methods,
+			.m_slots = nullptr,
+			.m_traverse = nullptr,
+			.m_clear = nullptr,
+			.m_free = nullptr,
 		};
 
 		//======================================================================
 		// MODULE ADD OBJECT
 		//======================================================================
 
-		static int module_new_exception(PyObject *m, const char *name,
-										PyObject *base, PyObject *dict,
-										PyObject **export_ptr = nullptr)
+		static int add_iebpr_exception(PyObject *m, const char *name,
+									   PyObject *base, PyObject *dict,
+									   PyObject **export_ptr_const = nullptr)
 		{
 			// create new exception type
 			auto exc = PyErr_NewException(name, base, dict);
 			if (!exc)
 				goto exc_new_fail;
-			if (export_ptr)
-				*export_ptr = exc;
+			if (export_ptr_const)
+				*export_ptr_const = exc;
 			// add to module
 			{
 				// find the name string after the last separator '.'
@@ -99,16 +104,16 @@ extern "C"
 			goto module_new_fail;
 
 		// add exception types
-		if (iebpr::python_interface::module_new_exception(m, "_iebpr.IebprError",
-														  nullptr,
-														  nullptr,
-														  &iebpr::python_interface::PyExc_IebprError))
+		if (iebpr::python_interface::add_iebpr_exception(m, "iebpr._iebpr.IebprError",
+														 nullptr,
+														 nullptr,
+														 &iebpr::python_interface::PyExc_IebprError))
 			goto module_add_member_fail;
 
-		if (iebpr::python_interface::module_new_exception(m, "_iebpr.IebprPrerunValidateError",
-														  iebpr::python_interface::PyExc_IebprError,
-														  nullptr,
-														  &iebpr::python_interface::PyExc_IebprPrerunValidateError))
+		if (iebpr::python_interface::add_iebpr_exception(m, "iebpr._iebpr.IebprPrerunValidateError",
+														 iebpr::python_interface::PyExc_IebprError,
+														 nullptr,
+														 &iebpr::python_interface::PyExc_IebprPrerunValidateError))
 			goto module_add_member_fail;
 
 		// add wrapped c++ classes to module

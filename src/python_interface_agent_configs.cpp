@@ -184,40 +184,40 @@ namespace iebpr
 
 		static PyTypeObject RandConfigPyObjectType = {
 			// head
-			PyObject_HEAD_INIT(&PyType_Type)
+			PyVarObject_HEAD_INIT(&PyType_Type, 0)
 			// class def
-			"_iebpr.RandConfig",		// class name
+			"iebpr._iebpr.RandConfig",	// tp_name (char *), class name
 			sizeof(RandConfigPyObject), // tp_basicsize
 			0,							// tp_itemsize
 			// basic methods
 			RandConfigPyObjectType_tp_dealloc, // (destructor) tp_dealloc, release member PyObject
-			0,								   // tp_print, deprecated in python 3.x
+			0,								   // tp_vectorcall_offset
 			nullptr,						   // tp_getattr, deprecated
 			nullptr,						   // tp_setattr, deprecated
 			nullptr,						   // tp_as_async (PyAsyncMethods*)
 			nullptr,						   // tp_repr (reprfunc)
 			// standard magic methods
-			nullptr,								  // tp_as_number (PyNumberMethods *)
-			nullptr,								  // tp_as_sequence (PySequenceMethods *)
-			nullptr,								  // tp_as_mapping (PyMappingMethods *)
-			nullptr,								  // tp_hash, i.e. self.__hash__()
-			nullptr,								  // tp_call, i.e. self.__call__()
-			nullptr,								  // tp_str (reprfunc), i.e. self.__str__()
-			PyObject_GenericGetAttr,				  // tp_getattro (getattrofunc), i.e. self.__getattr__()
-			PyObject_GenericSetAttr,				  // tp_setattro (setattrofunc), i.e. self.__setattr__()
-			nullptr,								  // tp_as_buffer (PyBufferProcs *)
-			Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, // tp_flags, unsigned long
-			"RandConfig(type: int, **kw)\n--\n"		  // tp_doc (char *), docstring
-			"config to generate randomized state/trait values\n"
-			"keywords:\n"
-			"      mean: float = 0\n"
-			"    stddev: float = 0\n"
-			"       low: float = 0\n"
-			"      high: float = 0\n"
-			"value_list: list[float] = None\n"
-			"   non_neg: bool = True\n"
-			"needed fields are based on distribution type\n"
-			"\nsee \'data descriptor\' section below for details\n",
+			nullptr,									  // tp_as_number (PyNumberMethods *)
+			nullptr,									  // tp_as_sequence (PySequenceMethods *)
+			nullptr,									  // tp_as_mapping (PyMappingMethods *)
+			nullptr,									  // tp_hash, i.e. self.__hash__()
+			nullptr,									  // tp_call, i.e. self.__call__()
+			nullptr,									  // tp_str (reprfunc), i.e. self.__str__()
+			PyObject_GenericGetAttr,					  // tp_getattro (getattrofunc), i.e. self.__getattr__()
+			PyObject_GenericSetAttr,					  // tp_setattro (setattrofunc), i.e. self.__setattr__()
+			nullptr,									  // tp_as_buffer (PyBufferProcs *)
+			Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,	  // tp_flags, unsigned long
+			PyDoc_STR("RandConfig(type: int, **kw)\n--\n" // tp_doc (char *), docstring
+					  "config to generate randomized state/trait values\n"
+					  "keywords:\n"
+					  "      mean: float = 0\n"
+					  "    stddev: float = 0\n"
+					  "       low: float = 0\n"
+					  "      high: float = 0\n"
+					  "value_list: list[float] = None\n"
+					  "   non_neg: bool = True\n"
+					  "needed fields are based on distribution type\n"
+					  "\nsee \'data descriptor\' section below for details\n"),
 			nullptr,						// tp_traverse (traverseproc), traverse through members
 			nullptr,						// tp_clear (inquiry), delete members
 			nullptr,						// tp_richcompare (richcmpfunc), rich-comparison
@@ -245,6 +245,7 @@ namespace iebpr
 			nullptr,						// tp_del, i.e. self.__del__()
 			0,								// tp_version_tag, unsigned int
 			nullptr,						// tp_finalize (destructor)
+			nullptr,						// tp_vectorcall (vectorcallfunc)
 		};
 
 		//======================================================================
@@ -345,14 +346,14 @@ namespace iebpr
 
 		static PyTypeObject StateRandConfigPyObjectType = {
 			// head
-			PyObject_HEAD_INIT(&PyType_Type)
+			PyVarObject_HEAD_INIT(&PyType_Type, 0)
 			// class def
-			"_iebpr.StateRandConfig",		 // class name
+			"iebpr._iebpr.StateRandConfig",	 // tp_name (char *), class name
 			sizeof(StateRandConfigPyObject), // tp_basicsize
 			0,								 // tp_itemsize
 			// basic methods
 			StateRandConfigPyObjectType_tp_dealloc, // (destructor) tp_dealloc, release member PyObject
-			0,										// tp_print, deprecated in python 3.x
+			0,										// tp_vectorcall_offset
 			nullptr,								// tp_getattr, deprecated
 			nullptr,								// tp_setattr, deprecated
 			nullptr,								// tp_as_async (PyAsyncMethods*)
@@ -368,15 +369,15 @@ namespace iebpr
 			PyObject_GenericSetAttr,				  // tp_setattro (setattrofunc), i.e. self.__setattr__()
 			nullptr,								  // tp_as_buffer (PyBufferProcs *)
 			Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, // tp_flags, unsigned long
-			"StateRandConfig(**kw)\n--\n"			  // tp_doc (char *), docstring
-			"randomizer config for agent states\n"
-			"keywords:\n"
-			"          biomass: RandConfig\n"
-			"    split_biomass: RandConfig\n"
-			"         glycogen: RandConfig\n"
-			"              pha: RandConfig\n"
-			"            polyp: RandConfig\n"
-			"\nsee \'data descriptor\' section below for details",
+			PyDoc_STR("StateRandConfig(**kw)\n--\n"	  // tp_doc (char *), docstring
+					  "randomizer config for agent states\n"
+					  "keywords:\n"
+					  "          biomass: RandConfig\n"
+					  "    split_biomass: RandConfig\n"
+					  "         glycogen: RandConfig\n"
+					  "              pha: RandConfig\n"
+					  "            polyp: RandConfig\n"
+					  "\nsee \'data descriptor\' section below for details"),
 			nullptr,							 // tp_traverse (traverseproc), traverse through members
 			nullptr,							 // tp_clear (inquiry), delete members
 			nullptr,							 // tp_richcompare (richcmpfunc), rich-comparison
@@ -404,6 +405,7 @@ namespace iebpr
 			nullptr,							 // tp_del, i.e. self.__del__()
 			0,									 // tp_version_tag, unsigned int
 			nullptr,							 // tp_finalize (destructor)
+			nullptr,							 // tp_vectorcall (vectorcallfunc)
 		};
 
 		//======================================================================
@@ -561,14 +563,14 @@ namespace iebpr
 
 		static PyTypeObject TraitRandConfigPyObjectType = {
 			// head
-			PyObject_HEAD_INIT(&PyType_Type)
+			PyVarObject_HEAD_INIT(&PyType_Type, 0)
 			// class def
-			"_iebpr.TraitRandConfig",		 // class name
+			"iebpr._iebpr.TraitRandConfig",	 // tp_name (char *), class name
 			sizeof(TraitRandConfigPyObject), // tp_basicsize
 			0,								 // tp_itemsize
 			// basic methods
 			TraitRandConfigPyObjectType_tp_dealloc, // (destructor) tp_dealloc, release member PyObject
-			0,										// tp_print, deprecated in python 3.x
+			0,										// tp_vectorcall_offset
 			nullptr,								// tp_getattr, deprecated
 			nullptr,								// tp_setattr, deprecated
 			nullptr,								// tp_as_async (PyAsyncMethods*)
@@ -584,52 +586,52 @@ namespace iebpr
 			PyObject_GenericSetAttr,				  // tp_setattro (setattrofunc), i.e. self.__setattr__()
 			nullptr,								  // tp_as_buffer (PyBufferProcs *)
 			Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, // tp_flags, unsigned long
-			"TraitRandConfig(**kw)\n--\n"			  // tp_doc (char *), docstring
-			"randomizer config for agent trait\n"
-			"keywords:"
-			"\n[synthesis rates]\n"
-			"               mu: RandConfig\n"
-			"       q_glycogen: RandConfig\n"
-			"            q_pha: RandConfig\n"
-			"          q_polyp: RandConfig\n"
-			"\n[maintenance rates]\n"
-			"        m_aerobic: RandConfig\n"
-			"      m_anaerobic: RandConfig\n"
-			"\n[decay rates]\n"
-			"        b_aerobic: RandConfig\n"
-			"      b_anaerobic: RandConfig\n"
-			"       b_glycogen: RandConfig\n"
-			"            b_pha: RandConfig\n"
-			"          b_polyp: RandConfig\n"
-			"\n[min/max quotas]\n"
-			"   x_glycogen_min: RandConfig\n"
-			"   x_glycogen_max: RandConfig\n"
-			"        x_pha_min: RandConfig\n"
-			"        x_pha_max: RandConfig\n"
-			"      x_polyp_min: RandConfig\n"
-			"      x_polyp_max: RandConfig\n"
-			"\n[half-saturation constants]\n"
-			"            k_hac: RandConfig\n"
-			"             k_op: RandConfig\n"
-			"       k_op_polyp: RandConfig\n"
-			"       k_glycogen: RandConfig\n"
-			"            k_pha: RandConfig\n"
-			"          k_polyp: RandConfig\n"
-			"\n[inhibitory half-saturation constants]\n"
-			"      ki_glycogen: RandConfig\n"
-			"           ki_pha: RandConfig\n"
-			"         ki_polyp: RandConfig\n"
-			"\n[yield ratios]\n"
-			"              y_h: RandConfig\n"
-			"   y_glycogen_pha: RandConfig\n"
-			"      y_polyp_pha: RandConfig\n"
-			"        y_pha_hac: RandConfig\n"
-			"           y_prel: RandConfig\n"
-			"            i_bmp: RandConfig\n"
-			"\n[misc]\n"
-			"       enable_tca: RandConfig\n"
-			"maint_polyp_first: RandConfig\n"
-			"\nsee \'data descriptor\' section below for details",
+			PyDoc_STR("TraitRandConfig(**kw)\n--\n"	  // tp_doc (char *), docstring
+					  "randomizer config for agent trait\n"
+					  "keywords:"
+					  "\n[synthesis rates]\n"
+					  "               mu: RandConfig\n"
+					  "       q_glycogen: RandConfig\n"
+					  "            q_pha: RandConfig\n"
+					  "          q_polyp: RandConfig\n"
+					  "\n[maintenance rates]\n"
+					  "        m_aerobic: RandConfig\n"
+					  "      m_anaerobic: RandConfig\n"
+					  "\n[decay rates]\n"
+					  "        b_aerobic: RandConfig\n"
+					  "      b_anaerobic: RandConfig\n"
+					  "       b_glycogen: RandConfig\n"
+					  "            b_pha: RandConfig\n"
+					  "          b_polyp: RandConfig\n"
+					  "\n[min/max quotas]\n"
+					  "   x_glycogen_min: RandConfig\n"
+					  "   x_glycogen_max: RandConfig\n"
+					  "        x_pha_min: RandConfig\n"
+					  "        x_pha_max: RandConfig\n"
+					  "      x_polyp_min: RandConfig\n"
+					  "      x_polyp_max: RandConfig\n"
+					  "\n[half-saturation constants]\n"
+					  "            k_hac: RandConfig\n"
+					  "             k_op: RandConfig\n"
+					  "       k_op_polyp: RandConfig\n"
+					  "       k_glycogen: RandConfig\n"
+					  "            k_pha: RandConfig\n"
+					  "          k_polyp: RandConfig\n"
+					  "\n[inhibitory half-saturation constants]\n"
+					  "      ki_glycogen: RandConfig\n"
+					  "           ki_pha: RandConfig\n"
+					  "         ki_polyp: RandConfig\n"
+					  "\n[yield ratios]\n"
+					  "              y_h: RandConfig\n"
+					  "   y_glycogen_pha: RandConfig\n"
+					  "      y_polyp_pha: RandConfig\n"
+					  "        y_pha_hac: RandConfig\n"
+					  "           y_prel: RandConfig\n"
+					  "            i_bmp: RandConfig\n"
+					  "\n[misc]\n"
+					  "       enable_tca: RandConfig\n"
+					  "maint_polyp_first: RandConfig\n"
+					  "\nsee \'data descriptor\' section below for details"),
 			nullptr,							 // tp_traverse (traverseproc), traverse through members
 			nullptr,							 // tp_clear (inquiry), delete members
 			nullptr,							 // tp_richcompare (richcmpfunc), rich-comparison
@@ -657,6 +659,7 @@ namespace iebpr
 			nullptr,							 // tp_del, i.e. self.__del__()
 			0,									 // tp_version_tag, unsigned int
 			nullptr,							 // tp_finalize (destructor)
+			nullptr,							 // tp_vectorcall (vectorcallfunc)
 		};
 
 		//======================================================================

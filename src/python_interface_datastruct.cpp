@@ -67,14 +67,14 @@ namespace iebpr
 
 		static PyTypeObject EnvStatePyObjectType = {
 			// head
-			PyObject_HEAD_INIT(&PyType_Type)
+			PyVarObject_HEAD_INIT(&PyType_Type, 0)
 			// class def
-			"_iebpr.EnvState",		  // class name
+			"ibepr._iebpr.EnvState",  // tp_name (char *), class name
 			sizeof(EnvStatePyObject), // tp_basicsize
 			0,						  // tp_itemsize
 			// basic methods
 			EnvStatePyObjectType_tp_dealloc, // (destructor) tp_dealloc, release member PyObject
-			0,								 // tp_print, deprecated in python 3.x
+			0,								 // tp_vectorcall_offset
 			nullptr,						 // tp_getattr, deprecated
 			nullptr,						 // tp_setattr, deprecated
 			nullptr,						 // tp_as_async (PyAsyncMethods*)
@@ -90,14 +90,14 @@ namespace iebpr
 			PyObject_GenericSetAttr,				  // tp_setattro (setattrofunc), i.e. self.__setattr__()
 			nullptr,								  // tp_as_buffer (PyBufferProcs *)
 			Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, // tp_flags, unsigned long
-			"EnvState(**kw)\n--\n"					  // tp_doc (char *), docstring
-			"environment state variables\n"
-			"keywords:\n"
-			"        volume: float = 0\n"
-			"      vfa_conc: float = 0\n"
-			"       op_conc: float = 0\n"
-			"    is_aerobic: bool = False\n"
-			"\nsee \'data descriptor\' section below for details\n",
+			PyDoc_STR("EnvState(**kw)\n--\n"		  // tp_doc (char *), docstring
+					  "environment state variables\n"
+					  "keywords:\n"
+					  "        volume: float = 0\n"
+					  "      vfa_conc: float = 0\n"
+					  "       op_conc: float = 0\n"
+					  "    is_aerobic: bool = False\n"
+					  "\nsee \'data descriptor\' section below for details\n"),
 			nullptr,					  // tp_traverse (traverseproc), traverse through members
 			nullptr,					  // tp_clear (inquiry), delete members
 			nullptr,					  // tp_richcompare (richcmpfunc), rich-comparison
@@ -125,6 +125,7 @@ namespace iebpr
 			nullptr,					  // tp_del, i.e. self.__del__()
 			0,							  // tp_version_tag, unsigned int
 			nullptr,					  // tp_finalize (destructor)
+			nullptr,					  // tp_vectorcall (vectorcallfunc)
 		};
 
 		//======================================================================
@@ -205,14 +206,14 @@ namespace iebpr
 
 		static PyTypeObject SbrPhasePyObjectType = {
 			// head
-			PyObject_HEAD_INIT(&PyType_Type)
+			PyVarObject_HEAD_INIT(&PyType_Type, 0)
 			// class def
-			"_iebpr.SbrPhase",		  // class name
+			"iebpr._iebpr.SbrPhase",  // tp_name (char *), class name
 			sizeof(SbrPhasePyObject), // tp_basicsize
 			0,						  // tp_itemsize
 			// basic methods
 			SbrPhasePyObjectType_tp_dealloc, // (destructor) tp_dealloc, release member PyObject
-			0,								 // tp_print, deprecated in python 3.x
+			0,								 // tp_vectorcall_offset
 			nullptr,						 // tp_getattr, deprecated
 			nullptr,						 // tp_setattr, deprecated
 			nullptr,						 // tp_as_async (PyAsyncMethods*)
@@ -228,18 +229,18 @@ namespace iebpr
 			PyObject_GenericSetAttr,				  // tp_setattro (setattrofunc), i.e. self.__setattr__()
 			nullptr,								  // tp_as_buffer (PyBufferProcs *)
 			Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, // tp_flags, unsigned long
-			"SbrPhase(**kw)\n--\n"					  // tp_doc (char *), docstring
-			"SBR phase configuration\n"
-			"keywords:\n"
-			"           time_len: float = 0\n"
-			"        inflow_rate: float = 0\n"
-			"    inflow_vfa_conc: float = 0\n"
-			"     inflow_op_conc: float = 0\n"
-			"      withdraw_rate: float = 0\n"
-			"       outflow_rate: float = 0\n"
-			"           aeration: bool = False\n"
-			"       volume_reset: float = 0\n"
-			"\nsee \'data descriptor\' section below for details\n",
+			PyDoc_STR("SbrPhase(**kw)\n--\n"		  // tp_doc (char *), docstring
+					  "SBR phase configuration\n"
+					  "keywords:\n"
+					  "           time_len: float = 0\n"
+					  "        inflow_rate: float = 0\n"
+					  "    inflow_vfa_conc: float = 0\n"
+					  "     inflow_op_conc: float = 0\n"
+					  "      withdraw_rate: float = 0\n"
+					  "       outflow_rate: float = 0\n"
+					  "           aeration: bool = False\n"
+					  "       volume_reset: float = 0\n"
+					  "\nsee \'data descriptor\' section below for details\n"),
 			nullptr,					  // tp_traverse (traverseproc), traverse through members
 			nullptr,					  // tp_clear (inquiry), delete members
 			nullptr,					  // tp_richcompare (richcmpfunc), rich-comparison
@@ -267,6 +268,7 @@ namespace iebpr
 			nullptr,					  // tp_del, i.e. self.__del__()
 			0,							  // tp_version_tag, unsigned int
 			nullptr,					  // tp_finalize (destructor)
+			nullptr,					  // tp_vectorcall (vectorcallfunc)
 		};
 
 		//======================================================================
@@ -463,14 +465,14 @@ namespace iebpr
 
 		static PyTypeObject SbrStagePyObjectType = {
 			// head
-			PyObject_HEAD_INIT(&PyType_Type)
+			PyVarObject_HEAD_INIT(&PyType_Type, 0)
 			// class def
-			"_iebpr.SbrStage",		  // class name
+			"iebpr._iebpr.SbrStage",  // tp_name (char *), class name
 			sizeof(SbrStagePyObject), // tp_basicsize
 			0,						  // tp_itemsize
 			// basic methods
 			SbrStagePyObjectType_tp_dealloc, // (destructor) tp_dealloc, release member PyObject
-			0,								 // tp_print, deprecated in python 3.x
+			0,								 // tp_vectorcall_offset
 			nullptr,						 // tp_getattr, deprecated
 			nullptr,						 // tp_setattr, deprecated
 			nullptr,						 // tp_as_async (PyAsyncMethods*)
@@ -486,12 +488,12 @@ namespace iebpr
 			PyObject_GenericSetAttr,				  // tp_setattro (setattrofunc), i.e. self.__setattr__()
 			nullptr,								  // tp_as_buffer (PyBufferProcs *)
 			Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, // tp_flags, unsigned long
-			"SbrStage(*ka, **kw)\n--\n"				  // tp_doc (char *), docstring
-			"SBR stage configuration\n"
-			"arguments:\n"
-			"        n_cycle: int = 0\n"
-			"    cycle_phase: list[SbrPhase] = None\n"
-			"\nsee \'data descriptor\' section below for details\n",
+			PyDoc_STR("SbrStage(*ka, **kw)\n--\n"	  // tp_doc (char *), docstring
+					  "SBR stage configuration\n"
+					  "arguments:\n"
+					  "        n_cycle: int = 0\n"
+					  "    cycle_phase: list[SbrPhase] = None\n"
+					  "\nsee \'data descriptor\' section below for details\n"),
 			nullptr,					  // tp_traverse (traverseproc), traverse through members
 			nullptr,					  // tp_clear (inquiry), delete members
 			nullptr,					  // tp_richcompare (richcmpfunc), rich-comparison
@@ -519,6 +521,7 @@ namespace iebpr
 			nullptr,					  // tp_del, i.e. self.__del__()
 			0,							  // tp_version_tag, unsigned int
 			nullptr,					  // tp_finalize (destructor)
+			nullptr,					  // tp_vectorcall (vectorcallfunc)
 		};
 
 		//======================================================================
