@@ -1,6 +1,7 @@
 #ifndef NO_PYTHON_INTERFACE
 
 #include <cstring>
+#include <sstream>
 #include <cstdarg>
 // numpy stuff
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
@@ -528,7 +529,7 @@ namespace iebpr
 			auto is_pcontinuous = PyObject_IsTrue(value);
 			if (PyErr_Occurred())
 				return -1;
-			((SimulationPyObject *)self)->cdata.set_simutype(is_pcontinuous ? SbrControl::simutype_enum::pcontinuous : SbrControl::simutype_enum::discrete);
+			((SimulationPyObject *)self)->cdata.set_simutype(is_pcontinuous ? Simulation::simutype_enum::pcontinuous : Simulation::simutype_enum::discrete);
 			return 0;
 		}
 
@@ -646,6 +647,22 @@ namespace iebpr
 			{nullptr, nullptr, nullptr, nullptr, nullptr},
 		};
 
+		static PyObject *SimulationPyObjectType_tp_str(PyObject *self)
+		{
+			const auto &cdata = ((SimulationPyObject *)self)->cdata;
+			auto ss = std::stringstream();
+			// type header
+			ss << "<" << Py_TYPE(self)->tp_name
+			   << " pcontinuous=" << (cdata.get_simutype() == Simulation::simutype_enum::pcontinuous ? "True" : "False")
+			   << " timestep=" << cdata.get_timestep()
+			   << " #stages=" << cdata.sbr.stages.size()
+			   << " #subtypes=" << cdata.n_agent_subtype()
+			   << " #agent=" << cdata.total_n_agent();
+			// add fields
+			ss << '>';
+			return PyUnicode_FromString(ss.str().c_str());
+		}
+
 		static void SimulationPyObjectType_tp_dealloc(PyObject *self)
 		{
 			((SimulationPyObject *)self)->cdata.~Simulation();
@@ -714,7 +731,7 @@ namespace iebpr
 			nullptr,								  // tp_as_mapping (PyMappingMethods *)
 			nullptr,								  // tp_hash, i.e. self.__hash__()
 			nullptr,								  // tp_call, i.e. self.__call__()
-			nullptr,								  // tp_str (reprfunc), i.e. self.__str__()
+			SimulationPyObjectType_tp_str,			  // tp_str (reprfunc), i.e. self.__str__()
 			PyObject_GenericGetAttr,				  // tp_getattro (getattrofunc), i.e. self.__getattr__()
 			PyObject_GenericSetAttr,				  // tp_setattro (setattrofunc), i.e. self.__setattr__()
 			nullptr,								  // tp_as_buffer (PyBufferProcs *)

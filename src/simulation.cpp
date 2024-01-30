@@ -18,12 +18,12 @@ namespace iebpr
 		return;
 	}
 
-	SbrControl::simutype_enum Simulation::get_simutype(void) const noexcept
+	Simulation::simutype_enum Simulation::get_simutype(void) const noexcept
 	{
 		return sbr.simutype;
 	}
 
-	void Simulation::set_simutype(SbrControl::simutype_enum simutype) noexcept
+	void Simulation::set_simutype(simutype_enum simutype) noexcept
 	{
 		sbr.simutype = simutype;
 		return;

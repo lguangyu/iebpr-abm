@@ -16,6 +16,7 @@ namespace iebpr
 	class Simulation
 	{
 	public:
+		using simutype_enum = SbrControl::simutype_enum;
 		using rand_t = Randomizer::rand_t;
 		using subtype_enum = AgentSubtypeBase::subtype_enum;
 
@@ -32,7 +33,7 @@ namespace iebpr
 		explicit Simulation(decltype(_rand.engine)::result_type seed = 0,
 							bool pcontinuous = false,
 							stvalue_t timestep = SbrControl::default_timestep) noexcept
-			: _rand(seed), sbr(_rand, pcontinuous ? SbrControl::simutype_enum::pcontinuous : SbrControl::simutype_enum::discrete,
+			: _rand(seed), sbr(_rand, pcontinuous ? simutype_enum::pcontinuous : simutype_enum::discrete,
 							   timestep),
 			  pool(_rand), recorder() {}
 
@@ -52,9 +53,9 @@ namespace iebpr
 		// SbrControl setup
 
 		// get simulation type
-		SbrControl::simutype_enum get_simutype(void) const noexcept;
+		simutype_enum get_simutype(void) const noexcept;
 		// set simulation type
-		void set_simutype(SbrControl::simutype_enum simutype) noexcept;
+		void set_simutype(simutype_enum simutype) noexcept;
 		// set initial env state
 		void set_init_env(const EnvState &env) noexcept;
 		// get timestep of SbrControl subunit

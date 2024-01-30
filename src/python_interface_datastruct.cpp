@@ -1,5 +1,6 @@
 #ifndef NO_PYTHON_INTERFACE
 
+#include <sstream>
 #include "iebpr/python_interface_datastruct.hpp"
 
 namespace iebpr
@@ -24,6 +25,19 @@ namespace iebpr
 			{nullptr, 0, 0, 0, nullptr},
 		};
 
+		static PyObject *EnvStatePyObjectType_tp_str(PyObject *self)
+		{
+			const auto &cdata = ((EnvStatePyObject *)self)->cdata;
+			auto ss = std::stringstream();
+			ss << "<" << Py_TYPE(self)->tp_name
+			   << " volume=" << cdata.volume
+			   << " vfa_conc=" << cdata.vfa_conc
+			   << " op_conc=" << cdata.op_conc
+			   << " is_aerobic=" << (cdata.is_aerobic ? "True" : "False")
+			   << ">";
+			return PyUnicode_FromString(ss.str().c_str());
+		}
+
 		static void EnvStatePyObjectType_tp_dealloc(PyObject *self)
 		{
 			((EnvStatePyObject *)self)->cdata.~EnvState();
@@ -33,7 +47,7 @@ namespace iebpr
 
 		static int EnvStatePyObjectType_tp_init(PyObject *self, PyObject *args, PyObject *kwargs)
 		{
-			auto _self = (EnvStatePyObject *)self;
+			auto &cdata = ((EnvStatePyObject *)self)->cdata;
 			static char *kwlist[] = {
 				(char *)"volume",
 				(char *)"vfa_conc",
@@ -48,10 +62,10 @@ namespace iebpr
 				return -1;
 			}
 			if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|dddp", kwlist,
-											 &(_self->cdata.volume),
-											 &(_self->cdata.vfa_conc),
-											 &(_self->cdata.op_conc),
-											 &(_self->cdata.is_aerobic)))
+											 &cdata.volume,
+											 &cdata.vfa_conc,
+											 &cdata.op_conc,
+											 &cdata.is_aerobic))
 				return -1;
 			return 0;
 		}
@@ -85,7 +99,7 @@ namespace iebpr
 			nullptr,								  // tp_as_mapping (PyMappingMethods *)
 			nullptr,								  // tp_hash, i.e. self.__hash__()
 			nullptr,								  // tp_call, i.e. self.__call__()
-			nullptr,								  // tp_str (reprfunc), i.e. self.__str__()
+			EnvStatePyObjectType_tp_str,			  // tp_str (reprfunc), i.e. self.__str__()
 			PyObject_GenericGetAttr,				  // tp_getattro (getattrofunc), i.e. self.__getattr__()
 			PyObject_GenericSetAttr,				  // tp_setattro (setattrofunc), i.e. self.__setattr__()
 			nullptr,								  // tp_as_buffer (PyBufferProcs *)
@@ -155,6 +169,32 @@ namespace iebpr
 			{nullptr, 0, 0, 0, nullptr},
 		};
 
+		static PyObject *SbrPhasePyObjectType_tp_str(PyObject *self)
+		{
+			const auto &cdata = ((SbrPhasePyObject *)self)->cdata;
+			auto ss = std::stringstream();
+			// type header
+			ss << "<" << Py_TYPE(self)->tp_name
+			   << " time_len=" << cdata.time_len;
+			// add fields
+			// only if the field value is worth showing
+			if (cdata.inflow_rate)
+				ss << " inflow_rate=" << cdata.inflow_rate;
+			if (cdata.inflow_vfa_conc)
+				ss << " inflow_vfa_conc=" << cdata.inflow_vfa_conc;
+			if (cdata.inflow_op_conc)
+				ss << " inflow_op_conc=" << cdata.inflow_op_conc;
+			if (cdata.withdraw_rate)
+				ss << " withdraw_rate=" << cdata.withdraw_rate;
+			if (cdata.outflow_rate)
+				ss << " outflow_rate=" << cdata.outflow_rate;
+			ss << " aeration=" << (cdata.aeration ? "True" : "False");
+			if ((cdata.volume_reset) && (cdata.volume_reset != stvalue_inf))
+				ss << " volume_reset=" << cdata.volume_reset;
+			ss << '>';
+			return PyUnicode_FromString(ss.str().c_str());
+		}
+
 		static void SbrPhasePyObjectType_tp_dealloc(PyObject *self)
 		{
 			((SbrPhasePyObject *)self)->cdata.~Phase();
@@ -164,7 +204,7 @@ namespace iebpr
 
 		static int SbrPhasePyObjectType_tp_init(PyObject *self, PyObject *args, PyObject *kwargs)
 		{
-			auto _self = (SbrPhasePyObject *)self;
+			auto &cdata = ((SbrPhasePyObject *)self)->cdata;
 			static char *kwlist[] = {
 				(char *)"time_len",
 				(char *)"inflow_rate",
@@ -183,14 +223,14 @@ namespace iebpr
 				return -1;
 			}
 			if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|ddddddpd", kwlist,
-											 &(_self->cdata.time_len),
-											 &(_self->cdata.inflow_rate),
-											 &(_self->cdata.inflow_vfa_conc),
-											 &(_self->cdata.inflow_op_conc),
-											 &(_self->cdata.withdraw_rate),
-											 &(_self->cdata.outflow_rate),
-											 &(_self->cdata.aeration),
-											 &(_self->cdata.volume_reset)))
+											 &cdata.time_len,
+											 &cdata.inflow_rate,
+											 &cdata.inflow_vfa_conc,
+											 &cdata.inflow_op_conc,
+											 &cdata.withdraw_rate,
+											 &cdata.outflow_rate,
+											 &cdata.aeration,
+											 &cdata.volume_reset))
 				return -1;
 			return 0;
 		}
@@ -224,7 +264,7 @@ namespace iebpr
 			nullptr,								  // tp_as_mapping (PyMappingMethods *)
 			nullptr,								  // tp_hash, i.e. self.__hash__()
 			nullptr,								  // tp_call, i.e. self.__call__()
-			nullptr,								  // tp_str (reprfunc), i.e. self.__str__()
+			SbrPhasePyObjectType_tp_str,			  // tp_str (reprfunc), i.e. self.__str__()
 			PyObject_GenericGetAttr,				  // tp_getattro (getattrofunc), i.e. self.__getattr__()
 			PyObject_GenericSetAttr,				  // tp_setattro (setattrofunc), i.e. self.__setattr__()
 			nullptr,								  // tp_as_buffer (PyBufferProcs *)
@@ -429,6 +469,15 @@ namespace iebpr
 			{nullptr, nullptr, nullptr, nullptr, nullptr},
 		};
 
+		static PyObject *SbrStagePyObjectType_tp_str(PyObject *self)
+		{
+			const auto &cdata = ((SbrStagePyObject *)self)->cdata;
+			return PyUnicode_FromFormat("<%s n_cycle=%lu cycle_phases=%lu set>",
+										Py_TYPE(self)->tp_name,
+										cdata.n_cycle,
+										cdata.cycle_phases.size());
+		}
+
 		static void SbrStagePyObjectType_tp_dealloc(PyObject *self)
 		{
 			((SbrStagePyObject *)self)->cdata.~Stage();
@@ -438,7 +487,7 @@ namespace iebpr
 
 		static int SbrStagePyObjectType_tp_init(PyObject *self, PyObject *args, PyObject *kwargs)
 		{
-			auto _self = (SbrStagePyObject *)self;
+			auto &cdata = ((SbrStagePyObject *)self)->cdata;
 			PyObject *cycle_phases = Py_None;
 			static char *kwlist[] = {
 				(char *)"n_cycle",
@@ -446,7 +495,7 @@ namespace iebpr
 				nullptr,
 			};
 			if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|nO", kwlist,
-											 &(_self->cdata.n_cycle),
+											 &cdata.n_cycle,
 											 &cycle_phases))
 				return -1;
 			if (SbrStagePyObjectType_set_cycle_phases(self, cycle_phases, nullptr))
@@ -483,7 +532,7 @@ namespace iebpr
 			nullptr,								  // tp_as_mapping (PyMappingMethods *)
 			nullptr,								  // tp_hash, i.e. self.__hash__()
 			nullptr,								  // tp_call, i.e. self.__call__()
-			nullptr,								  // tp_str (reprfunc), i.e. self.__str__()
+			SbrStagePyObjectType_tp_str,			  // tp_str (reprfunc), i.e. self.__str__()
 			PyObject_GenericGetAttr,				  // tp_getattro (getattrofunc), i.e. self.__getattr__()
 			PyObject_GenericSetAttr,				  // tp_setattro (setattrofunc), i.e. self.__setattr__()
 			nullptr,								  // tp_as_buffer (PyBufferProcs *)

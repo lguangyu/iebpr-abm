@@ -1,5 +1,6 @@
 #ifndef NO_PYTHON_INTERFACE
 
+#include <sstream>
 #include "iebpr/python_interface_agent_configs.hpp"
 
 namespace iebpr
@@ -130,6 +131,47 @@ namespace iebpr
 			{nullptr, nullptr, nullptr, nullptr, nullptr},
 		};
 
+		static PyObject *RandConfigPyObjectType_tp_str(PyObject *self)
+		{
+			const auto &cdata = ((RandConfigPyObject *)self)->cdata;
+			auto ss = std::stringstream();
+			// type header
+			ss << '<' << Py_TYPE(self)->tp_name
+			   << " type=" << Randomizer::randtype_enum_to_name(cdata.type)
+			   << '[' << (uint32_t)cdata.type << ']';
+			// arguments based on type
+			switch (cdata.type)
+			{
+			case Randomizer::rand_t::constant:
+			case Randomizer::rand_t::bernoulli:
+				ss << " mean=" << cdata.mean;
+				break;
+			case Randomizer::rand_t::normal:
+				ss << " mean=" << cdata.mean
+				   << " stddev=" << cdata.stddev
+				   << " non_neg=" << (cdata.non_neg ? "True" : "False");
+				break;
+			case Randomizer::rand_t::uniform:
+				ss << " low=" << cdata.low
+				   << " high=" << cdata.high
+				   << " non_neg=" << (cdata.non_neg ? "True" : "False");
+				break;
+			case Randomizer::rand_t::obsvalues:
+				ss << " mean=" << cdata.mean
+				   << " obsvalues=(";
+				for (size_t i = 0; i < cdata.value_list.size(); i++)
+					ss << (i ? ", " : "") << cdata.value_list[i];
+				ss << ')';
+				break;
+			case Randomizer::rand_t::none:
+			case Randomizer::rand_t::invalid:
+			default:
+				break;
+			}
+			ss << '>';
+			return PyUnicode_FromString(ss.str().c_str());
+		}
+
 		static void RandConfigPyObjectType_tp_dealloc(PyObject *self)
 		{
 			((RandConfigPyObject *)self)->cdata.~RandConfig();
@@ -202,7 +244,7 @@ namespace iebpr
 			nullptr,									  // tp_as_mapping (PyMappingMethods *)
 			nullptr,									  // tp_hash, i.e. self.__hash__()
 			nullptr,									  // tp_call, i.e. self.__call__()
-			nullptr,									  // tp_str (reprfunc), i.e. self.__str__()
+			RandConfigPyObjectType_tp_str,				  // tp_str (reprfunc), i.e. self.__str__()
 			PyObject_GenericGetAttr,					  // tp_getattro (getattrofunc), i.e. self.__getattr__()
 			PyObject_GenericSetAttr,					  // tp_setattro (setattrofunc), i.e. self.__setattr__()
 			nullptr,									  // tp_as_buffer (PyBufferProcs *)
