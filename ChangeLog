@@ -1,0 +1,14 @@
+2024-02-01:
+
+* bumped version to 0.1.0rc1
+
+C++:
+
+* removed Simulation.get_run_duration(), introduced Simulation.last_run_duration()
+* fixed bug in Recorder.prerun_validate()
+* fixed bug in the polymer switch of pao anaerobic maintenance 
+
+python interface:
+
+* deprecated Simulation.get_run_duration()
+* introduced Simulation.last_run_duration (as data descriptor)

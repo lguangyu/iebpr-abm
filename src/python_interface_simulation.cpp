@@ -350,7 +350,8 @@ namespace iebpr
 
 		static PyObject *SimulationPyObjectType_method_get_run_duration(PyObject *self, PyObject *args)
 		{
-			return Py_BuildValue("K", (long long)(((SimulationPyObject *)self)->cdata.get_run_duration().count()));
+			PyErr_WarnEx(PyExc_DeprecationWarning, "get_run_duration() is deprecated and will be removed in future; use data descriptor last_run_duration instead", 1);
+			return Py_BuildValue("K", (long long)(((SimulationPyObject *)self)->cdata.last_run_duration().count()));
 		}
 
 		static PyObject *SimulationPyObjectType_method_retrieve_env_state_rec(PyObject *self, PyObject *args)
@@ -605,14 +606,19 @@ namespace iebpr
 			return nullptr;
 		}
 
-		static PyObject *SimulationPyObjectType_get_n_state_rec_timepoints(PyObject *self, void *args)
+		static PyObject *SimulationPyObjectType_get_n_state_rec_timepoints(PyObject *self, void *closure)
 		{
 			return Py_BuildValue("n", ((SimulationPyObject *)self)->cdata.n_state_rec_timepoints());
 		}
 
-		static PyObject *SimulationPyObjectType_get_n_snapshot_rec_timepoints(PyObject *self, void *args)
+		static PyObject *SimulationPyObjectType_get_n_snapshot_rec_timepoints(PyObject *self, void *closure)
 		{
 			return Py_BuildValue("n", ((SimulationPyObject *)self)->cdata.n_snapshot_rec_timepoints());
+		}
+
+		static PyObject *SimulationPyObjectType_get_last_run_duration(PyObject *self, void *closure)
+		{
+			return Py_BuildValue("K", (long long)(((SimulationPyObject *)self)->cdata.last_run_duration().count()));
 		}
 
 		static PyGetSetDef SimulationPyObjectType_getsets[] = {
@@ -644,6 +650,9 @@ namespace iebpr
 			 "number of timepoints set for state record -> int", nullptr},
 			{"n_snapshot_rec_timepoints", SimulationPyObjectType_get_n_snapshot_rec_timepoints, nullptr,
 			 "number of timepoints set for snapshot record -> int", nullptr},
+			// Simulation
+			{"last_run_duration", SimulationPyObjectType_get_last_run_duration, nullptr,
+			 "the duration of last successful run, in milliseconds", nullptr},
 			{nullptr, nullptr, nullptr, nullptr, nullptr},
 		};
 

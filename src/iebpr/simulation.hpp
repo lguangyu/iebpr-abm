@@ -121,7 +121,7 @@ namespace iebpr
 		// run simulation, main loop
 		error_enum run(void);
 		// get simulation run duration
-		std::chrono::milliseconds get_run_duration(void) const noexcept;
+		std::chrono::milliseconds last_run_duration(void) const noexcept;
 		// retireve env state record results from simulation
 		const decltype(Recorder::env_state_rec) &retrieve_env_state_rec(void) const noexcept;
 		// retireve agent state record results from simulation

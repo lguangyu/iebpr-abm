@@ -29,22 +29,38 @@ namespace iebpr
 		return;
 	}
 
+	static error_enum _validate_timepoins(const std::vector<stvalue_t> &timepoints,
+										  const SbrControl &sbr)
+	{
+		// no need to check if no timepoints set
+		if (timepoints.empty())
+			return none;
+
+		// check range, should be within simulation time range
+		if ((timepoints.front() < 0) || (timepoints.back() > sbr.total_time_len()))
+			return rec_time_exceed_simulation;
+
+		// check steps between timepoints
+		// no need to check if there is only one timepoint
+		if (timepoints.size() == 1)
+			return none;
+
+		for (auto itr = timepoints.begin(); itr < timepoints.end() - 1; itr++)
+			if ((*(itr + 1) - *itr) <= sbr.get_timestep())
+				return rec_step_smaller_than_timestep;
+
+		return none;
+	}
+
 	error_enum Recorder::prerun_validate(const SbrControl &sbr) const noexcept
 	{
-		// by calling after prerun_init, assuming sorted timepoints
-		// check timepoints range
-		if ((state_rec_timepoints.front() < 0) ||
-			(state_rec_timepoints.back() > sbr.total_time_len()) ||
-			(snapshot_rec_timepoints.front() < 0) ||
-			(snapshot_rec_timepoints.back() > sbr.total_time_len()))
-			return rec_time_exceed_simulation;
-		// check step between timepoints
-		for (auto itr = state_rec_timepoints.begin(); itr < state_rec_timepoints.end() - 1; itr++)
-			if ((*(itr + 1) - *itr) <= sbr.get_timestep())
-				return rec_step_smaller_than_timestep;
-		for (auto itr = snapshot_rec_timepoints.begin(); itr < snapshot_rec_timepoints.end() - 1; itr++)
-			if ((*(itr + 1) - *itr) <= sbr.get_timestep())
-				return rec_step_smaller_than_timestep;
+		error_enum ret = none;
+		ret = _validate_timepoins(state_rec_timepoints, sbr);
+		if (ret != none)
+			return ret;
+		ret = _validate_timepoins(snapshot_rec_timepoints, sbr);
+		if (ret != none)
+			return ret;
 		return none;
 	}
 

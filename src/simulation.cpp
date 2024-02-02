@@ -203,7 +203,7 @@ namespace iebpr
 		return sigint_handler.sig_received() ? error_enum::sigint : error_enum::none;
 	}
 
-	std::chrono::milliseconds Simulation::get_run_duration(void) const noexcept
+	std::chrono::milliseconds Simulation::last_run_duration(void) const noexcept
 	{
 		return _timer.get_duration();
 	}

@@ -98,7 +98,7 @@ namespace iebpr
 			case bernoulli:
 			{
 				auto res = (bivalue_t)(uniform_gen(engine) <= cfg.mean);
-				std::memcpy(&ret, &res, sizeof(ret));
+				std::memcpy(&ret, &res, sizeof(res));
 				break;
 			}
 			case obsvalues:

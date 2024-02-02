@@ -174,7 +174,7 @@ namespace iebpr
 			// maintenance
 			// portion resolved by calculation order
 			const auto p_glycogen = agent.trait.bt.maint_polyp_first ? std::min(1 - monod_polyp, monod_glycogen) : monod_glycogen;
-			const auto p_polyp = agent.trait.bt.maint_polyp_first ? std::min(1 - monod_glycogen, monod_polyp) : monod_polyp;
+			const auto p_polyp = agent.trait.bt.maint_polyp_first ? monod_polyp : std::min(1 - monod_glycogen, monod_polyp);
 			// belows are order-free
 			// glycogen
 			{

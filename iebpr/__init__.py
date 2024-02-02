@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-__version__ = "0.0.1"
+__version__ = "0.1.0rc1"
 
 try:
 	from . import _iebpr
